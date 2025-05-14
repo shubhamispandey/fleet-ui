@@ -1,0 +1,26 @@
+.sticky {
+  position: fixed;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+  -webkit-transition: all 0.3s ease-out 0s;
+  transition: all 0.3s ease-out 0s;
+}
+
+.sticky nav li a {
+  color: #162447;
+}
+.sticky nav li a:hover {
+  color: #5e69ff;
+}
+.sticky nav li button {
+  background: #5e69ff;
+  color: #fff;
+}
+.sticky nav li button:hover {
+  color: #5e69ff;
+  background: #fff;
+}
