@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { redirect } from "next/navigation";
 import useAuth from "@/components/auth/useAuth";
 import Features from "@/components/landing/features/Features";
@@ -10,6 +10,8 @@ import Loader from "@/components/loader/Loader";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
+
+ 
 
   useLayoutEffect(() => {
     if (!isLoading && isAuthenticated) {
