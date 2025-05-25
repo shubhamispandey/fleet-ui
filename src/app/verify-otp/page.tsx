@@ -20,7 +20,7 @@ export default function VerifyOtpPage() {
 
   useLayoutEffect(() => {
     if (!isLoading && isAuthenticated) {
-      redirect("/auth/dashboard");
+      redirect("/dashboard");
     }
   }, [isAuthenticated, isLoading]);
 
@@ -97,7 +97,9 @@ export default function VerifyOtpPage() {
             {otp.map((_, index) => (
               <input
                 key={index}
-                ref={(el: any) => (otpRefs.current[index] = el)}
+                ref={(el: HTMLInputElement | null): void => {
+                  otpRefs.current[index] = el;
+                }}
                 type="text"
                 maxLength={1}
                 value={otp[index]}
@@ -122,7 +124,7 @@ export default function VerifyOtpPage() {
 
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
-            Didn't receive the OTP?{" "}
+            Didn&apos;t receive the OTP?{" "}
             <button className="font-semibold text-indigo-600 hover:text-indigo-500">
               Resend OTP
             </button>

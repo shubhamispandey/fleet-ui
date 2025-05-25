@@ -3,7 +3,7 @@ import { NotifyProps } from "@/types";
 
 const UseDrawers = () => {
   const notify = ({ message, type }: NotifyProps) => {
-    (toast as any)[type](message);
+    toast[type](message);
   };
 
   return { notify };

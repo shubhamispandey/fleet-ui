@@ -13,7 +13,7 @@ export default function Home() {
 
   useLayoutEffect(() => {
     if (!isLoading && isAuthenticated) {
-      redirect("/auth/dashboard");
+      redirect("/dashboard");
     }
   }, [isAuthenticated, isLoading]);
 

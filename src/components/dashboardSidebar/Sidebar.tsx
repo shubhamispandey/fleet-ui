@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React from "react";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import io from "socket.io-client";
 
 import Button from "../button/Button";
 import useMeet from "@/hooks/useMeet";
@@ -17,18 +16,16 @@ interface SidebarItem {
 }
 
 const Sidebar: React.FC = () => {
-  const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
-  const authState = useTypedSelector((state) => state.auth.login.data);
+  const authState = useSelector((state: RootState) => state.auth.login.data);
   // const socket = io(process.env.NEXTAUTH_URL);
   const pathname = usePathname();
-  const router = useRouter();
 
   const { handleStartMeeting } = useMeet();
 
   const sidebarItems: SidebarItem[] = [
-    { href: "/auth/dashboard", label: "Chats", icon: "comments" },
-    { href: "/auth/dashboard/people", label: "People", icon: "user" },
-    { href: "/auth/dashboard/settings", label: "Settings", icon: "cog" },
+    { href: "/dashboard", label: "Chats", icon: "comments" },
+    { href: "/dashboard/people", label: "People", icon: "user" },
+    { href: "/dashboard/settings", label: "Settings", icon: "cog" },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -77,7 +74,7 @@ const Sidebar: React.FC = () => {
               <i className="lni lni-video" style={{ fontSize: "25px" }}></i>
             }
             onClick={() =>
-              handleStartMeeting({ email: (authState as any)?.email })
+              handleStartMeeting({ email: authState?.email as string })
             }
             label="Instant Meet"
           />

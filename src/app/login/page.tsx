@@ -24,7 +24,7 @@ export default function LoginPage() {
 
   useLayoutEffect(() => {
     if (!isLoading && isAuthenticated) {
-      redirect("/auth/dashboard");
+      redirect("/dashboard");
     }
   }, [isAuthenticated, isLoading]);
 

@@ -10,11 +10,25 @@ import {
   VerifyOtpParams,
 } from "@/types";
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 const authEndPoints = config.apiEndPoints.auth;
 
 export const registerThunk = createAsyncThunk(
   actionTypes.auth.REGISTER,
-  async ({ payload, redirect }: { payload: RegisterParams; redirect: any }) => {
+  async ({
+    payload,
+    redirect,
+  }: {
+    payload: RegisterParams;
+    redirect: (path: string) => void;
+  }) => {
     const { notify } = UseDrawers();
     const response: ApiResponse = await makeApiCall({
       url: `${authEndPoints.baseUrl}${authEndPoints.register}`,
@@ -25,7 +39,9 @@ export const registerThunk = createAsyncThunk(
       message: response.message,
       type: response.status === 201 ? "success" : "error",
     });
-    response.status === 201 && redirect("/verify-otp/?email=" + payload.email);
+    if (response.status === 201) {
+      redirect("/verify-otp/?email=" + payload.email);
+    }
   }
 );
 
@@ -36,7 +52,7 @@ export const verifyOtpThunk = createAsyncThunk(
     redirect,
   }: {
     payload: VerifyOtpParams;
-    redirect: any;
+    redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
     const response: ApiResponse = await makeApiCall({
@@ -48,7 +64,9 @@ export const verifyOtpThunk = createAsyncThunk(
       message: response.message,
       type: response.status === 200 ? "success" : "error",
     });
-    response.status === 200 && redirect("/login");
+    if (response.status === 200) {
+      redirect("/login");
+    }
   }
 );
 
@@ -70,7 +88,13 @@ export const resendOtpThunk = createAsyncThunk(
 
 export const loginThunk = createAsyncThunk(
   actionTypes.auth.LOGIN,
-  async ({ payload, redirect }: { payload: LoginParams; redirect: any }) => {
+  async ({
+    payload,
+    redirect,
+  }: {
+    payload: LoginParams;
+    redirect: (path: string) => void;
+  }) => {
     const { notify } = UseDrawers();
 
     try {
@@ -81,14 +105,12 @@ export const loginThunk = createAsyncThunk(
       });
 
       if (response.status === 200) {
-        if (Object.keys(response.data).includes("accessToken")) {
-          localStorage.setItem(
-            "accessToken",
-            (response.data as any).accessToken
-          );
+        const data = response.data as Record<string, unknown>;
+        if (Object.keys(data).includes("accessToken")) {
+          localStorage.setItem("accessToken", data.accessToken as string);
         }
 
-        redirect("/auth/dashboard");
+        redirect("/dashboard");
       } else {
         notify({
           message: response.message,
@@ -100,7 +122,7 @@ export const loginThunk = createAsyncThunk(
     } catch (error) {
       notify({
         message:
-          (error as any)?.response?.data?.message ||
+          (error as ApiError)?.response?.data?.message ||
           "An error occurred while logging in. Please try again.",
         type: "error",
       });
@@ -128,9 +150,10 @@ export const getUserThunk = createAsyncThunk(
       // redirect("/");
 
       return rejectWithValue(response.message || "Failed to get user details.");
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage =
-        error.response?.data?.message || "An unexpected error occurred";
+        (error as ApiError)?.response?.data?.message ||
+        "An unexpected error occurred";
 
       // localStorage.clear();
       // redirect("/");

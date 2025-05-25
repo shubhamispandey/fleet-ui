@@ -15,7 +15,10 @@ const useAuth = () => {
   );
 
   const verifyOtp = useCallback(
-    ({ email, otp }: VerifyOtpParams, redirect: any): void => {
+    (
+      { email, otp }: VerifyOtpParams,
+      redirect: (path: string) => void
+    ): void => {
       const payload: VerifyOtpParams = {
         email,
         otp,

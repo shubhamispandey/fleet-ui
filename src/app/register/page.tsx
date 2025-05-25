@@ -14,6 +14,7 @@ import useAuth from "@/components/auth/useAuth";
 import Loader from "@/components/loader/Loader";
 import { RegisterParams } from "@/types";
 import AvatarSelector from "@/components/avatarSelector/Avatar";
+import { RootState } from "@/redux/store";
 
 export default function RegisterPage() {
   const [userData, setUserData] = useState<RegisterParams>({
@@ -28,10 +29,10 @@ export default function RegisterPage() {
   const { register } = UseAuth();
   const router = useRouter();
 
-  const authState = useSelector((state) => (state as any).auth.register);
+  const authState = useSelector((state: RootState) => state.auth.register);
 
   useLayoutEffect(() => {
-    if (!isLoading && isAuthenticated) redirect("/auth/dashboard");
+    if (!isLoading && isAuthenticated) redirect("/dashboard");
   }, [isAuthenticated, isLoading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +108,7 @@ export default function RegisterPage() {
               label="Register"
               className="mt-4"
               fullWidth={true}
-              loading={(authState as any).loading}
+              loading={authState.loading}
               onClick={() => register(userData, router.push)}
             />
           </div>

@@ -14,14 +14,14 @@ const useMeet = () => {
     (payload: createMeetParams) => {
       dispatch(actions.meet.createMeetThunk({ payload, redirect }));
     },
-    [dispatch, router]
+    [dispatch, redirect]
   );
 
   const getMeetInfo = useCallback(
     (payload: getMeetInfoParams) => {
       dispatch(actions.meet.getMeetInfoThunk({ payload, redirect }));
     },
-    [dispatch]
+    [dispatch, redirect]
   );
 
   return { handleStartMeeting, getMeetInfo };

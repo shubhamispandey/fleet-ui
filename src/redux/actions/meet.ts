@@ -7,6 +7,15 @@ import { ApiResponse, createMeetParams, getMeetInfoParams } from "@/types";
 
 const meetEndPoints = config.apiEndPoints.meet;
 
+interface ApiError {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 export const createMeetThunk = createAsyncThunk(
   actionTypes.meet.CREATE_MEET,
   async ({
@@ -14,7 +23,7 @@ export const createMeetThunk = createAsyncThunk(
     redirect,
   }: {
     payload: createMeetParams;
-    redirect: any;
+    redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
     const response: ApiResponse = await makeApiCall({
@@ -26,9 +35,14 @@ export const createMeetThunk = createAsyncThunk(
       message: response.message,
       type: response.status === 201 ? "success" : "error",
     });
-    response.status === 201 &&
-      response.data?.meetingCode &&
-      redirect(`/auth/meet/${response.data?.meetingCode}`);
+    if (
+      response.status === 201 &&
+      (response.data as { meetingCode?: string }).meetingCode
+    ) {
+      redirect(
+        `/auth/meet/${(response.data as { meetingCode: string }).meetingCode}`
+      );
+    }
 
     return response.data;
   }
@@ -57,12 +71,12 @@ export const getMeetInfoThunk = createAsyncThunk(
 
       // Handle known error responses
       if (response.status === 404) {
-        redirect("/auth/dashboard");
+        redirect("/dashboard");
         return rejectWithValue({ message: "Meeting not found", status: 404 });
       }
 
       if (response.status === 400) {
-        redirect("/auth/dashboard");
+        redirect("/dashboard");
         return rejectWithValue({
           message: "Invalid meeting code",
           status: 400,
@@ -74,19 +88,14 @@ export const getMeetInfoThunk = createAsyncThunk(
         message: "Unexpected error",
         status: response.status,
       });
-    } catch (error: any) {
-      // Handle network or other unexpected errors
-      console.error("Error fetching meeting info:", error);
-
-      // Redirect if the error is critical (optional)
-      if (error?.response?.status === 500) {
-        redirect("/auth/dashboard");
+    } catch (error) {
+      const err = error as ApiError;
+      if (err.response?.status === 500) {
+        redirect("/dashboard");
       }
-
       return rejectWithValue({
-        message:
-          error?.response?.data?.message || "Failed to fetch meeting info",
-        status: error?.response?.status || 500,
+        message: err.response?.data?.message || "Failed to fetch meeting info",
+        status: err.response?.status || 500,
       });
     }
   }
