@@ -3,7 +3,7 @@
 import { ChangeEvent, useLayoutEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"; 
 import { signIn } from "next-auth/react";
 
 import Button from "@/components/button/Button";

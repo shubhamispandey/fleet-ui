@@ -27,7 +27,7 @@ const Features = () => {
             </div>
             <div className="space-y-4 mt-3">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
-                Start a text Chat
+                Start a Chat
               </h3>
               <p className="text-gray-600 dark:text-slate-200">
                 Text chat can be started in every room between anyone in the
