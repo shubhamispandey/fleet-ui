@@ -1,12 +1,13 @@
 // components/SearchBar.tsx
 "use client";
 
+import { UserType } from "@/types";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useState, useEffect } from "react";
 
 interface SearchBarProps {
   onSearch: (query: string, category: "people" | "chats") => void;
-  searchResults: Array<any>; // Adjust the type based on your data structure
+  searchResults: UserType[]; // Adjust the type based on your data structure
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchResults }) => {
@@ -69,7 +70,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchResults }) => {
             </svg>
           </MenuButton>
 
-          <MenuItems className="absolute top-full mt-1 w-full max-w-48 bg-white divide-y divide-gray-100 rounded-lg overflow-hidden shadow dark:bg-gray-700">
+          <MenuItems className="absolute top-full mt-1 w-full max-w-48 bg-white divide-y divide-gray-100 rounded-lg overflow-hidden shadow dark:bg-gray-700 z-[1]">
             <MenuItem>
               {({ active }) => (
                 <button
@@ -122,7 +123,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchResults }) => {
                     type="button"
                     className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
                   >
-                    {category === "people" ? result.name : result.title}
+                    {category === "people" ? result.name : "Chat Category"}
                   </button>
                 </li>
               ))}

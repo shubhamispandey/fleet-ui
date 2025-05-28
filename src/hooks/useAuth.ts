@@ -45,7 +45,7 @@ const useAuth = () => {
 
   const getUser = useCallback(
     (redirect: (path: string) => void): void => {
-      dispatch(actions.auth.getUserThunk(redirect));
+      dispatch(actions.users.getUserThunk(redirect));
     },
     [dispatch]
   );

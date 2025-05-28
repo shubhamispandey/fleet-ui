@@ -13,7 +13,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) getUser(router.push);
-  }, [isLoading, isAuthenticated, getUser]);
+  }, [isLoading, isAuthenticated, getUser, router.push]);
 
   if (isLoading) {
     return (

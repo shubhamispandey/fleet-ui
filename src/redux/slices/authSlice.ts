@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserThunk, loginThunk, registerThunk } from "../actions/auth";
-import { ApiResponse } from "@/types";
+import { loginThunk, registerThunk } from "../actions/auth";
 import { AuthState, LoginData } from "@/types/login/login.types";
 
 const authSlice = createSlice({
@@ -30,31 +29,11 @@ const authSlice = createSlice({
       .addCase(loginThunk.pending, (state) => {
         state.login.loading = true;
       })
-      .addCase(
-        loginThunk.fulfilled,
-        (state, action: { payload: ApiResponse }) => {
-          state.login.loading = false;
-          state.login.data = (action.payload.data || {}) as LoginData;
-        }
-      )
+      .addCase(loginThunk.fulfilled, (state) => {
+        state.login.loading = false;
+      })
       .addCase(loginThunk.rejected, (state) => {
         state.login.loading = false;
-        state.login.data = {} as LoginData;
-      })
-      // getUserThunk
-      .addCase(getUserThunk.pending, (state) => {
-        state.login.loading = true;
-      })
-      .addCase(
-        getUserThunk.fulfilled,
-        (state, action: { payload: ApiResponse }) => {
-          state.login.loading = false;
-          state.login.data = (action.payload.data || {}) as LoginData;
-        }
-      )
-      .addCase(getUserThunk.rejected, (state) => {
-        state.login.loading = false;
-        state.login.data = {} as LoginData;
       });
   },
 });

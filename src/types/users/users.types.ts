@@ -1,0 +1,23 @@
+export interface UserType {
+  _id: string;
+  name: string;
+  avatar: string;
+  email: string;
+  isVerified: boolean;
+  createdAt: string;
+  __v: number;
+}
+
+export interface UsersType {
+  loading: boolean;
+  data: UserType[];
+  error: string | null;
+}
+
+export interface UsersState {
+  user: {
+    loading: boolean;
+    data: UserType | null;
+    error: string | null;
+  };
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { RootState } from "@/redux/store";
 import {
   Disclosure,
@@ -11,14 +12,23 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
+import { UsersType } from "@/types";
 
 export default function Navbar() {
   const session = useSession();
-  const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
-  const authState = useTypedSelector((state) => state.auth.login.data);
+  const user = useSelector((state: RootState) => state.users.user.data);
+  const [searchResults, setSearchResults] = useState<UsersType>({
+    loading: false,
+    data: [],
+    error: null,
+  });
+
+  const handleSearch = (query: string, category: "people" | "chats") => {
+    // Implement search logic here
+    console.log(`Searching for ${query} in ${category}`);
+  };
 
   const handleSignOut = () => {
     signOut();
@@ -48,7 +58,10 @@ export default function Navbar() {
               />
             </div>
             <div className="mx-auto  w-full max-w-3xl">
-              <SearchBar onSearch={() => {}} searchResults={[]} />
+              <SearchBar
+                onSearch={handleSearch}
+                searchResults={searchResults}
+              />
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -74,9 +87,7 @@ export default function Navbar() {
                     alt=""
                     src={
                       session.data?.user?.image ||
-                      `/img/avatars/${
-                        (authState as any)?.avatar || "user.webp"
-                      }`
+                      `/img/avatars/${user?.avatar || "user.webp"}`
                     }
                     className="h-8 w-8 rounded-full"
                     width={32}
