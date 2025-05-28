@@ -28,6 +28,11 @@ export default function Navbar() {
   const handleSearch = (query: string, category: "people" | "chats") => {
     // Implement search logic here
     console.log(`Searching for ${query} in ${category}`);
+    setSearchResults({
+      loading: true,
+      data: [],
+      error: null,
+    })
   };
 
   const handleSignOut = () => {
