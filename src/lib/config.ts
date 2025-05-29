@@ -10,8 +10,8 @@ const config = {
     },
     users: {
       baseUrl: "/users",
-      getCurrentUser: "/me"
-
+      getCurrentUser: "/me",
+      search: "/search",
     },
     meet: {
       baseUrl: "/meet",

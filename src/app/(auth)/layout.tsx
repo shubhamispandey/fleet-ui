@@ -2,18 +2,18 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import useAuthHook from "@/hooks/useAuth";
 import useAuth from "@/components/auth/useAuth";
 import Loader from "@/components/loader/Loader";
+import useUser from "@/hooks/useUser";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
-  const { getUser } = useAuthHook();
+  const { getCurrentUser } = useUser();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) getUser(router.push);
-  }, [isLoading, isAuthenticated, getUser, router.push]);
+    if (!isLoading && isAuthenticated) getCurrentUser(router.push);
+  }, [isLoading, isAuthenticated, getCurrentUser, router.push]);
 
   if (isLoading) {
     return (

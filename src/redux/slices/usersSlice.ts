@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UsersState } from "@/types";
-import { getUserThunk } from "../actions/users";
+import { UsersState, UserType } from "@/types";
+import { getCurrentUserThunk } from "../actions/users";
 
 const usersSlice = createSlice({
   initialState: {
@@ -14,17 +14,16 @@ const usersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-
-      // getUserThunk
-      .addCase(getUserThunk.pending, (state) => {
+      // getCurrentUserThunk
+      .addCase(getCurrentUserThunk.pending, (state) => {
         state.user.loading = true;
       })
-      .addCase(getUserThunk.fulfilled, (state, action) => {
+      .addCase(getCurrentUserThunk.fulfilled, (state, action) => {
         state.user.loading = false;
-        state.user.data = action.payload.data || null;
+        state.user.data = action.payload.data as UserType | null;
         state.user.error = null;
       })
-      .addCase(getUserThunk.rejected, (state) => {
+      .addCase(getCurrentUserThunk.rejected, (state) => {
         state.user.loading = false;
         state.user.data = null;
         state.user.error = "Failed to fetch user data.";

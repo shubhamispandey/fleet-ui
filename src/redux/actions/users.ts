@@ -2,15 +2,15 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import actionTypes from "../actionTypes";
 import makeApiCall from "@/lib/makeApi";
 import config from "@/lib/config";
-import { ApiResponse, ApiError } from "@/types";
+import { ApiResponse, ApiError, UserType } from "@/types";
 
 const usersEndPoints = config.apiEndPoints.users;
 
-export const getUserThunk = createAsyncThunk(
+export const getCurrentUserThunk = createAsyncThunk(
   actionTypes.auth.GETUSER,
   async (redirect: (path: string) => void, { rejectWithValue }) => {
     try {
-      const response: ApiResponse = await makeApiCall({
+      const response: ApiResponse<UserType> = await makeApiCall({
         url: `${usersEndPoints.baseUrl}${usersEndPoints.getCurrentUser}`,
         method: "GET",
       });

@@ -43,14 +43,7 @@ const useAuth = () => {
     [dispatch]
   );
 
-  const getUser = useCallback(
-    (redirect: (path: string) => void): void => {
-      dispatch(actions.users.getUserThunk(redirect));
-    },
-    [dispatch]
-  );
-
-  return { login, register, verifyOtp, resendOtp, getUser };
+  return { login, register, verifyOtp, resendOtp };
 };
 
 export default useAuth;

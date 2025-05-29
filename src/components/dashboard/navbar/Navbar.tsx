@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
 import { UsersType } from "@/types";
+import useDashboard from "@/hooks/useDashboard";
 
 export default function Navbar() {
   const session = useSession();
@@ -25,15 +26,7 @@ export default function Navbar() {
     error: null,
   });
 
-  const handleSearch = (query: string, category: "people" | "chats") => {
-    // Implement search logic here
-    console.log(`Searching for ${query} in ${category}`);
-    setSearchResults({
-      loading: true,
-      data: [],
-      error: null,
-    })
-  };
+  const { handleSearchNavbar } = useDashboard();
 
   const handleSignOut = () => {
     signOut();
@@ -64,8 +57,10 @@ export default function Navbar() {
             </div>
             <div className="mx-auto  w-full max-w-3xl">
               <SearchBar
-                onSearch={handleSearch}
-                searchResults={searchResults}
+                onSearch={(query, category) =>
+                  handleSearchNavbar(query, category, setSearchResults)
+                }
+                searchResults={searchResults.data}
               />
             </div>
           </div>

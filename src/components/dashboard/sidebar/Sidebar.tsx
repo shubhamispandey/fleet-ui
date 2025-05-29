@@ -6,7 +6,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-import Button from "../button/Button";
+import Button from "../../button/Button";
 import useMeet from "@/hooks/useMeet";
 
 interface SidebarItem {

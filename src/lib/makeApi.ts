@@ -1,33 +1,32 @@
-import axios, { AxiosResponse } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
   withCredentials: true,
 });
 
-const setAuthorizationHeaders = (): {
-  accessToken?: string;
-  userId?: string;
-} => {
+const setAuthorizationHeaders = (): Record<string, string> => {
   const accessToken = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
-
-  if (accessToken && userId) {
-    return { accessToken, userId };
-  }
-  return {};
+  const headers: Record<string, string> = {};
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+  if (userId) headers["X-User-Id"] = userId;
+  return headers;
 };
 
 api.interceptors.request.use(
-  (config: any) => {
+  (config: InternalAxiosRequestConfig) => {
     const headers = setAuthorizationHeaders();
-    config.headers = {
-      ...config.headers,
-      ...headers,
-    };
+    Object.entries(headers).forEach(([key, value]) => {
+      if (value) config.headers.set?.(key, value);
+    });
     return config;
   },
-  (error: any) => {
+  (error) => {
     return Promise.reject(error);
   }
 );
@@ -43,19 +42,20 @@ api.interceptors.request.use(
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 type ResponseType = "json" | "blob" | "text" | "arraybuffer" | "document";
 
-interface ApiCallParams {
+type ApiCallParams = {
   url: string;
   method?: HttpMethod;
-  data?: any;
+  data?: unknown;
+  params?: Record<string, unknown>;
   customHeaders?: Record<string, string>;
   responseType?: ResponseType;
-}
+};
 
-// The function definition with TypeScript
 const makeApiCall = async <T>({
   url,
   method = "GET",
   data = null,
+  params = {}, // <-- Accept query params here
   customHeaders = {},
   responseType = "json",
 }: ApiCallParams): Promise<T> => {
@@ -64,13 +64,14 @@ const makeApiCall = async <T>({
       url,
       method,
       data,
+      params, // <-- Pass to Axios
       headers: customHeaders,
       responseType,
     });
 
     return response.data;
-  } catch (error: any) {
-    if (error?.response?.data?.status === 0) {
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.data?.status === 0) {
       localStorage.clear();
       window.location.href = "/login";
     }

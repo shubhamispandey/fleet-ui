@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import Navbar from "@/components/dashboardNavigation/Nav";
-import Sidebar from "@/components/dashboardSidebar/Sidebar";
+import Navbar from "@/components/dashboard/navbar/Navbar";
+import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 
 const DashboardLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (

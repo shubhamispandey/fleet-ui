@@ -13,7 +13,7 @@ import Input from "@/components/input/Input";
 import useAuth from "@/components/auth/useAuth";
 import Loader from "@/components/loader/Loader";
 import { RegisterParams } from "@/types";
-import AvatarSelector from "@/components/avatarSelector/Avatar";
+import AvatarSelector from "@/components/avatar-selector/Avatar";
 import { RootState } from "@/redux/store";
 
 export default function RegisterPage() {
