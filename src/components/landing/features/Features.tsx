@@ -1,4 +1,5 @@
 import React from "react";
+import { Video, MessagesSquare, SlidersHorizontal } from "lucide-react";
 
 const Features = () => {
   return (
@@ -8,7 +9,7 @@ const Features = () => {
           {/* Feature 1 */}
           <div className="max-w-xs text-center flex flex-col items-center">
             <div className="flex justify-center items-center text-6xl text-indigo-600 rounded-full w-36 h-36 bg-indigo-100 mb-4">
-              <i className="lni lni-video"></i>
+              <Video size={64} />
             </div>
             <div className="space-y-4 mt-3">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
@@ -23,7 +24,7 @@ const Features = () => {
           {/* Feature 2 */}
           <div className="max-w-xs text-center flex flex-col items-center">
             <div className="flex justify-center items-center text-6xl text-indigo-600 rounded-full w-36 h-36 bg-indigo-100 mb-4">
-              <i className="lni lni-comments"></i>
+              <MessagesSquare size={64} />
             </div>
             <div className="space-y-4 mt-3">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
@@ -39,7 +40,7 @@ const Features = () => {
           {/* Feature 3 */}
           <div className="max-w-xs text-center flex flex-col items-center">
             <div className="flex justify-center items-center text-6xl text-indigo-600 rounded-full w-36 h-36 bg-indigo-100 mb-4">
-              <i className="lni lni-control-panel"></i>
+              <SlidersHorizontal size={64} />
             </div>
             <div className="space-y-4 mt-3">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white">

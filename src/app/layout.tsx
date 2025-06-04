@@ -22,10 +22,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link
-          href="https://cdn.lineicons.com/4.0/lineicons.css"
-          rel="stylesheet"
-        />
-        <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
         />

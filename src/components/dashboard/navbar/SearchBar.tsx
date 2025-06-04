@@ -1,137 +1,162 @@
-// components/SearchBar.tsx
 "use client";
 
 import { UserType } from "@/types";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { useState, useEffect } from "react";
+import { Search, User, MessageSquare, ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 interface SearchBarProps {
   onSearch: (query: string, category: "people" | "chats") => void;
-  searchResults: UserType[]; // Adjust the type based on your data structure
+  searchResults: UserType[];
+  isLoading?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchResults }) => {
+const SearchBar = ({ onSearch, searchResults, isLoading }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"people" | "chats">("people");
 
-  // Debounced search logic
+  // Debounced search
   useEffect(() => {
     const handler = setTimeout(() => {
       if (query.trim()) onSearch(query, category);
-    }, 500);
+    }, 300);
     return () => clearTimeout(handler);
   }, [query, category, onSearch]);
 
-  // Select category and search
   const handleCategorySelect = (selectedCategory: "people" | "chats") => {
     setCategory(selectedCategory);
     if (query.trim()) onSearch(query, selectedCategory);
   };
 
-  // Utility function to get placeholder icon
-  const getCategoryPlaceholder = (icon = true) =>
-    icon ? (
-      <span className="flex items-center gap-2">
-        {getIcon()} {category === "people" ? "People" : "Chats"}
-      </span>
-    ) : category === "people" ? (
-      `People`
-    ) : (
-      `Chats`
-    );
-
-  const getIcon = () =>
-    category === "people" ? (
-      <i className="lni lni-user"></i>
-    ) : (
-      <i className="lni lni-comments"></i>
-    );
-
   return (
-    <div className="mx-auto relative">
-      <div className="flex">
-        {/* Dropdown Menu */}
-        <Menu as="div" className="relative inline-block text-left">
-          <MenuButton className="flex items-center py-2.5 px-4 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 focus:ring-1 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600">
-            {getCategoryPlaceholder()}
-            <svg
-              className="w-2.5 h-2.5 ms-2.5"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
+    <div className="relative w-full max-w-2xl md:mx-4">
+      <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent">
+        {/* Category Dropdown */}
+        <Menu as="div" className="relative">
+          <MenuButton className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl overflow-hidden text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors w-32">
+            {category === "people" ? (
+              <User className="text-indigo-500 w-5 h-5" />
+            ) : (
+              <MessageSquare className="text-indigo-500 w-5 h-5" />
+            )}
+            <span className="inline">
+              {category === "people" ? "People" : "Chats"}
+            </span>
+            <ChevronDown className="text-gray-400 w-4 h-4" />
           </MenuButton>
 
-          <MenuItems className="absolute top-full mt-1 w-full max-w-48 bg-white divide-y divide-gray-100 rounded-lg overflow-hidden shadow dark:bg-gray-700 z-[1]">
-            <MenuItem>
-              {({ active }) => (
-                <button
-                  onClick={() => handleCategorySelect("people")}
-                  className={`${
-                    active || category === "people"
-                      ? "bg-slate-100 dark:bg-gray-600"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-600"
-                  } flex items-center gap-2 w-full px-4 py-2 text-sm dark:text-white`}
-                >
-                  <i className="lni lni-user"></i> People
-                </button>
-              )}
-            </MenuItem>
-            <MenuItem>
-              {({ active }) => (
-                <button
-                  onClick={() => handleCategorySelect("chats")}
-                  className={`${
-                    active || category === "chats"
-                      ? "bg-slate-100 dark:bg-gray-600"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-600"
-                  } flex items-center gap-2 w-full px-4 py-2 text-sm dark:text-white`}
-                >
-                  <i className="lni lni-comments"></i> Chats
-                </button>
-              )}
-            </MenuItem>
-          </MenuItems>
+          <Transition
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-1 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-1 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <MenuItems className="absolute sm:fixed left-0 sm:left-0 sm:right-0 mt-2 sm:top-16 w-56 sm:w-full origin-top-left bg-white dark:bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-gray-200 dark:border-gray-700">
+              <div className="py-1">
+                <MenuItem>
+                  {({ focus }) => (
+                    <button
+                      onClick={() => handleCategorySelect("people")}
+                      className={`${
+                        focus || category === "people"
+                          ? "bg-indigo-50 dark:bg-gray-700 text-indigo-600 dark:text-indigo-400"
+                          : "text-gray-700 dark:text-gray-200"
+                      } flex items-center gap-2 w-full px-4 py-2 text-sm`}
+                    >
+                      <User className="text-indigo-500 w-5 h-5" />
+                      People
+                    </button>
+                  )}
+                </MenuItem>
+                <MenuItem>
+                  {({ focus }) => (
+                    <button
+                      onClick={() => handleCategorySelect("chats")}
+                      className={`${
+                        focus || category === "chats"
+                          ? "bg-indigo-50 dark:bg-gray-700 text-indigo-600 dark:text-indigo-400"
+                          : "text-gray-700 dark:text-gray-200"
+                      } flex items-center gap-2 w-full px-4 py-2 text-sm`}
+                    >
+                      <MessageSquare className="text-indigo-500 w-5 h-5" />
+                      Chats
+                    </button>
+                  )}
+                </MenuItem>
+              </div>
+            </MenuItems>
+          </Transition>
         </Menu>
 
         {/* Search Input */}
-        <input
-          type="text"
-          className="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-r-lg border border-gray-300 focus:ring-2 focus:ring-slate-300  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none z-20"
-          placeholder={`Search ${getCategoryPlaceholder(false)}`}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div className="relative flex-1">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-4 py-3 border-0 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0 focus:border-transparent focus:outline-none sm:text-sm"
+            placeholder={`Search ${
+              category === "people" ? "people" : "chats"
+            }...`}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Search Results */}
       {query.trim() && (
-        <div className="absolute top-full mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10 dark:bg-gray-700 dark:border-gray-600">
-          {searchResults.length > 0 ? (
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-              {searchResults.map((result, index) => (
-                <li key={index}>
+        <div className="absolute mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {isLoading ? (
+            <div className="p-4 flex justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-500"></div>
+            </div>
+          ) : searchResults.length > 0 ? (
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
+              {searchResults.map((result) => (
+                <li key={result.email || result.name}>
                   <button
-                    type="button"
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
+                    onClick={() => {
+                      setQuery("");
+                      // Handle result selection
+                    }}
                   >
-                    {category === "people" ? result.name : "Chat Category"}
+                    <div className="flex-shrink-0">
+                      <Image
+                        className="h-10 w-10 rounded-full object-cover"
+                        src={result.avatar || "/default-avatar.png"}
+                        alt={result.name}
+                        width={40}
+                        height={40}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {result.name}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                        {category === "people" ? result.email : ""}
+                      </p>
+                    </div>
                   </button>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 ">
-              No {getCategoryPlaceholder(false)} found.
-            </p>
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              No {category} found for &quot;{query}&quot;
+            </div>
           )}
         </div>
       )}
