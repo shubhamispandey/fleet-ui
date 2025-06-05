@@ -117,42 +117,46 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
 
       {/* Search Results */}
       {query.trim() && (
-        <div className="absolute mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="absolute mt-2 w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-700 overflow-hidden">
           {searchResults.loading ? (
             <div className="p-4 flex justify-center">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-500"></div>
             </div>
           ) : searchResults.data.length > 0 ? (
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
-              {searchResults.data.map((result) => (
-                <li key={result.email || result.name}>
-                  <button
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
-                    onClick={() => {
-                      setQuery("");
-                      // Handle result selection
-                    }}
-                  >
-                    <div className="flex-shrink-0">
-                      <Image
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={`/img/avatars/${result.avatar || "user.webp"}`}
-                        alt={result.name}
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {result.name}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {category === "people" ? result.email : ""}
-                      </p>
-                    </div>
-                  </button>
-                </li>
-              ))}
+              {searchResults.data.map((result) => {
+                const avatar = `/img/avatars/${result.avatar || "user.webp"}`;
+                console.log(avatar);
+                return (
+                  <li key={result.email || result.name}>
+                    <button
+                      className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
+                      onClick={() => {
+                        setQuery("");
+                        // Handle result selection
+                      }}
+                    >
+                      <div className="flex-shrink-0">
+                        <Image
+                          className="h-10 w-10 rounded-full object-cover"
+                          src={avatar}
+                          alt={result.name}
+                          width={40}
+                          height={40}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {result.name}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                          {category === "people" ? result.email : ""}
+                        </p>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">

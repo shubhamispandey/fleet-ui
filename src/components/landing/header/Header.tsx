@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./Header.module.css";
 import { useRouter } from "next/navigation";
-import { Menu, Circle } from "lucide-react"; // Add this import at the top with others
+import { Menu, Circle, LogIn } from "lucide-react"; // Add this import at the top with others
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -105,7 +105,7 @@ const Header = () => {
                 onClick={() => router.push("/login")}
                 className="bg-[#5e69ff] text-white md:bg-white rounded-md md:text-primary py-3 px-4 gap-2 leading-4 flex items-center md:mx-0"
               >
-                <Circle size={20} /> Sign In
+                <LogIn /> Sign In
               </button>
             </li>
           </ul>
