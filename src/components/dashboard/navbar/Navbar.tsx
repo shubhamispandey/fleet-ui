@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { RootState } from "@/redux/store";
 import {
   Menu,
@@ -36,6 +36,12 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { handleSearchNavbar } = useDashboard();
+  const handleSearch = useCallback(
+    (query: string, category: "people" | "chats") => {
+      handleSearchNavbar(query, category, setSearchResults);
+    },
+    [handleSearchNavbar]
+  );
 
   const handleSignOut = () => {
     signOut();
@@ -78,11 +84,8 @@ export default function Navbar() {
             {/* Search - Hidden on mobile */}
             <div className="hidden md:block md:ml-6 md:flex-1 md:max-w-md lg:max-w-xl">
               <SearchBar
-                onSearch={(query, category) =>
-                  handleSearchNavbar(query, category, setSearchResults)
-                }
-                searchResults={searchResults.data}
-                isLoading={searchResults.loading}
+                onSearch={handleSearch}
+                searchResults={searchResults}
               />
             </div>
           </div>
@@ -191,13 +194,7 @@ export default function Navbar() {
       >
         <div className="md:hidden px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
           <div className="px-2">
-            <SearchBar
-              onSearch={(query, category) =>
-                handleSearchNavbar(query, category, setSearchResults)
-              }
-              searchResults={searchResults.data}
-              isLoading={searchResults.loading}
-            />
+            <SearchBar onSearch={handleSearch} searchResults={searchResults} />
           </div>
         </div>
       </Transition>

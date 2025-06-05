@@ -1,6 +1,6 @@
 import config from "@/lib/config";
 import makeApiCall from "@/lib/makeApi";
-import { UsersType } from "@/types";
+import { UserResponseType, UsersType } from "@/types";
 import { useCallback } from "react";
 
 const useDashboard = () => {
@@ -10,18 +10,28 @@ const useDashboard = () => {
       category: "people" | "chats",
       setSearchResults: React.Dispatch<React.SetStateAction<UsersType>>
     ) => {
-      console.log(`Searching for ${query} in ${category}`);
-      const response = await makeApiCall({
-        url: `${config.apiEndPoints.users.baseUrl}${config.apiEndPoints.users.search}`,
-        method: "GET",
-        params: { q: query },
-      });
-      console.log(response);
-      setSearchResults({
-        loading: true,
-        data: [],
-        error: null,
-      });
+      setSearchResults((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response: UserResponseType = await makeApiCall({
+          url: `${config.apiEndPoints.users.baseUrl}${config.apiEndPoints.users.search}`,
+          method: "GET",
+          params: { q: query },
+        });
+        setSearchResults({
+          loading: false,
+          data: response.data,
+          error: null,
+        });
+      } catch (error) {
+        setSearchResults({
+          loading: false,
+          data: [],
+          error:
+            error instanceof Error
+              ? error.message
+              : "An error occurred while searching.",
+        });
+      }
     },
     []
   );

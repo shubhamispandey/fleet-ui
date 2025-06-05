@@ -1,6 +1,6 @@
 "use client";
 
-import { UserType } from "@/types";
+import { UsersType } from "@/types";
 import {
   Menu,
   MenuButton,
@@ -14,11 +14,10 @@ import Image from "next/image";
 
 interface SearchBarProps {
   onSearch: (query: string, category: "people" | "chats") => void;
-  searchResults: UserType[];
-  isLoading?: boolean;
+  searchResults: UsersType;
 }
 
-const SearchBar = ({ onSearch, searchResults, isLoading }: SearchBarProps) => {
+const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"people" | "chats">("people");
 
@@ -34,6 +33,8 @@ const SearchBar = ({ onSearch, searchResults, isLoading }: SearchBarProps) => {
     setCategory(selectedCategory);
     if (query.trim()) onSearch(query, selectedCategory);
   };
+
+  console.log(searchResults);
 
   return (
     <div className="relative w-full max-w-2xl md:mx-4">
@@ -117,13 +118,13 @@ const SearchBar = ({ onSearch, searchResults, isLoading }: SearchBarProps) => {
       {/* Search Results */}
       {query.trim() && (
         <div className="absolute mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-700 overflow-hidden">
-          {isLoading ? (
+          {searchResults.loading ? (
             <div className="p-4 flex justify-center">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-500"></div>
             </div>
-          ) : searchResults.length > 0 ? (
+          ) : searchResults.data.length > 0 ? (
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
-              {searchResults.map((result) => (
+              {searchResults.data.map((result) => (
                 <li key={result.email || result.name}>
                   <button
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
@@ -135,7 +136,7 @@ const SearchBar = ({ onSearch, searchResults, isLoading }: SearchBarProps) => {
                     <div className="flex-shrink-0">
                       <Image
                         className="h-10 w-10 rounded-full object-cover"
-                        src={result.avatar || "/default-avatar.png"}
+                        src={`/img/avatars/${result.avatar || "user.webp"}`}
                         alt={result.name}
                         width={40}
                         height={40}

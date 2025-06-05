@@ -14,6 +14,11 @@ export interface UsersType {
   error: string | null;
 }
 
+export interface UserResponseType {
+  data: UserType[];
+  error: string | null;
+  message: string;
+}
 export interface UsersState {
   user: {
     loading: boolean;
