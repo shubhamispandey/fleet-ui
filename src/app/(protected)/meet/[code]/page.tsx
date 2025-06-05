@@ -1,12 +1,12 @@
 "use client";
 
 import { TypedUseSelectorHook, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState } from "@redux/store";
 import { useCallback, useEffect, useRef, useState } from "react";
-import useMeet from "@/hooks/useMeet";
+import useMeet from "@hooks/useMeet";
 import { io } from "socket.io-client";
 import Image from "next/image";
-import Videos from "@/components/meet/Videos";
+import Videos from "@components/meet/Videos";
 
 const MeetingPage = ({ params }: { params: { code: string } }) => {
   const socket = useRef<any>(null);

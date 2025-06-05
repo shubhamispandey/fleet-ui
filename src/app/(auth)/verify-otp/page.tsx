@@ -2,10 +2,10 @@
 
 import { useState, useRef, useLayoutEffect } from "react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import Button from "@/components/button/Button";
-import UseAuth from "@/hooks/useAuth";
-import useAuth from "@/components/auth/useAuth";
-import Loader from "@/components/loader/Loader";
+import Button from "@components/button/Button";
+import UseAuth from "@hooks/useAuth";
+import useAuth from "@components/auth/useAuth";
+import Loader from "@components/loader/Loader";
 
 export default function VerifyOtpPage() {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));

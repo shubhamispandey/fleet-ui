@@ -1,6 +1,6 @@
-import config from "@/lib/config";
-import makeApiCall from "@/lib/makeApi";
-import { UserResponseType, UsersType } from "@/types";
+import config from "@lib/config";
+import makeApiCall from "@lib/makeApi";
+import { UserResponseType, UsersType } from "@types";
 import { useCallback } from "react";
 
 const useDashboard = () => {

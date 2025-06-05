@@ -7,14 +7,14 @@ import { useSelector } from "react-redux";
 import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import UseAuth from "@/hooks/useAuth";
-import Button from "@/components/button/Button";
-import Input from "@/components/input/Input";
-import useAuth from "@/components/auth/useAuth";
-import Loader from "@/components/loader/Loader";
-import { RegisterParams } from "@/types";
-import AvatarSelector from "@/components/avatar-selector/Avatar";
-import { RootState } from "@/redux/store";
+import UseAuth from "@hooks/useAuth";
+import Button from "@components/button/Button";
+import Input from "@components/input/Input";
+import useAuth from "@components/auth/useAuth";
+import Loader from "@components/loader/Loader";
+import { RegisterParams } from "@types";
+import AvatarSelector from "@components/avatar-selector/Avatar";
+import { RootState } from "@redux/store";
 
 export default function RegisterPage() {
   const [userData, setUserData] = useState<RegisterParams>({

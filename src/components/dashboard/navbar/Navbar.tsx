@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { RootState } from "@/redux/store";
+import { RootState } from "@redux/store";
 import {
   Menu,
   MenuButton,
@@ -14,8 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
-import { UsersType } from "@/types";
-import useDashboard from "@/hooks/useDashboard";
+import { UsersType } from "@types";
+import useDashboard from "@hooks/useDashboard";
 import {
   Bell,
   LogOut,

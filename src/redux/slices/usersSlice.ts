@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UsersState, UserType } from "@/types";
-import { getCurrentUserThunk } from "../actions/users";
+import { getCurrentUserThunk } from "@redux/actions/users";
+import { UsersState, UserType } from "../../types";
+import { toast } from "react-toastify";
 
 const usersSlice = createSlice({
   initialState: {
@@ -11,7 +12,13 @@ const usersSlice = createSlice({
     },
   } as UsersState,
   name: "users",
-  reducers: {},
+  reducers: {
+    // Set Status
+    setStatus: (state, action) => {
+      if (state.user.data) state.user.data.status = action.payload;
+      else toast.error("User data not available to set status.");
+    },
+  },
   extraReducers: (builder) => {
     builder
       // getCurrentUserThunk
@@ -32,3 +39,4 @@ const usersSlice = createSlice({
 });
 
 export default usersSlice.reducer;
+export const { setStatus } = usersSlice.actions;

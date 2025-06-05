@@ -1,15 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import actionTypes from "../actionTypes";
-import makeApiCall from "@/lib/makeApi";
-import config from "@/lib/config";
-import UseDrawers from "@/hooks/useDrawers";
+import makeApiCall from "@lib/makeApi";
+import config from "@lib/config";
+import UseDrawers from "@hooks/useDrawers";
 import {
   ApiResponse,
   LoginParams,
   RegisterParams,
   VerifyOtpParams,
   ApiError,
-} from "@/types";
+} from "@types";
 
 const authEndPoints = config.apiEndPoints.auth;
 

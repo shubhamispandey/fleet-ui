@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import { ToastContainer } from "react-toastify";
-import AuthProvider from "@/components/auth-provider/AuthProvider";
+import AuthProvider from "@components/auth-provider/AuthProvider";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import ReduxProvider from "@/redux/redux-provider";
+import ReduxProvider from "@redux/redux-provider";
 
 const openSansFont = Open_Sans({ subsets: ["latin"] });
 

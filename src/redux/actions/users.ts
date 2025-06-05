@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import actionTypes from "../actionTypes";
-import makeApiCall from "@/lib/makeApi";
-import config from "@/lib/config";
-import { ApiResponse, ApiError, UserType } from "@/types";
+import makeApiCall from "@lib/makeApi";
+import config from "@lib/config";
+import { ApiResponse, ApiError, UserType } from "../../types";
 
 const usersEndPoints = config.apiEndPoints.users;
 
@@ -18,9 +18,6 @@ export const getCurrentUserThunk = createAsyncThunk(
       if (response.status === 200) {
         return response;
       }
-
-      // localStorage.clear();
-      // redirect("/");
 
       return rejectWithValue(response.message || "Failed to get user details.");
     } catch (error) {

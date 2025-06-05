@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import actions from "@/redux/actions";
-import { AppDispatch } from "@/redux/store";
-import { LoginParams, RegisterParams, VerifyOtpParams } from "@/types";
+import actions from "@redux/actions";
+import { AppDispatch } from "@redux/store";
+import { LoginParams, RegisterParams, VerifyOtpParams } from "@types";
 
 const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();

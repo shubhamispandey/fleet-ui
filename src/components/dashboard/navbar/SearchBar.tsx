@@ -1,6 +1,6 @@
 "use client";
 
-import { UsersType } from "@/types";
+import { UsersType } from "@types";
 import {
   Menu,
   MenuButton,
@@ -46,20 +46,15 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
         setQuery("");
       }
     }
-    if (query.trim()) {
+    if (query.trim())
       document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [query]);
 
   const handleCategorySelect = (selectedCategory: "people" | "chats") => {
     setCategory(selectedCategory);
     if (query.trim()) onSearch(query, selectedCategory);
   };
-
-  console.log(searchResults);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-2xl md:mx-4">

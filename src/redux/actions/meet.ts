@@ -1,9 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import actionTypes from "../actionTypes";
-import UseDrawers from "@/hooks/useDrawers";
-import config from "@/lib/config";
-import makeApiCall from "@/lib/makeApi";
-import { ApiResponse, createMeetParams, getMeetInfoParams } from "@/types";
+import UseDrawers from "@hooks/useDrawers";
+import config from "@lib/config";
+import makeApiCall from "@lib/makeApi";
+import { ApiResponse, createMeetParams, getMeetInfoParams } from "@types";
 
 const meetEndPoints = config.apiEndPoints.meet;
 

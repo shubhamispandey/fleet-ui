@@ -2,9 +2,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Container from "@/components/chat/Container";
-import Sidebar from "@/components/chat/Sidebar";
-import { Message, Chat } from "@/components/chat/types";
+import Container from "@components/chat/Container";
+import Sidebar from "@components/chat/Sidebar";
+import { Message, Chat } from "@components/chat/types";
 import { MessagesSquare } from "lucide-react";
 
 const EmptyChatList = () => (

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState } from "@redux/store";
 
 import Button from "../../button/Button";
-import useMeet from "@/hooks/useMeet";
+import useMeet from "@hooks/useMeet";
 
 interface SidebarItem {
   href: string;

@@ -3,15 +3,15 @@
 import { ChangeEvent, useLayoutEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link"; 
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 
-import Button from "@/components/button/Button";
-import Input from "@/components/input/Input";
-import useAuth from "@/components/auth/useAuth";
-import useAuthHook from "@/hooks/useAuth";
-import { LoginParams } from "@/types";
-import Loader from "@/components/loader/Loader";
+import Button from "@components/button/Button";
+import Input from "@components/input/Input";
+import useAuth from "@components/auth/useAuth";
+import useAuthHook from "@hooks/useAuth";
+import { LoginParams } from "../../../types";
+import Loader from "@components/loader/Loader";
 
 export default function LoginPage() {
   const [userData, setUserData] = useState<LoginParams>({

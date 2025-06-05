@@ -2,9 +2,10 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import useAuth from "@/components/auth/useAuth";
-import Loader from "@/components/loader/Loader";
-import useUser from "@/hooks/useUser";
+import useAuth from "@components/auth/useAuth";
+import Loader from "@components/loader/Loader";
+import SocketManager from "@components/socket-manager/SocketManager";
+import useUser from "@hooks/useUser";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -30,7 +31,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return null;
   }
 
-  return <div>{children}</div>;
+  return (
+    <div>
+      <SocketManager />
+      {children}
+    </div>
+  );
 };
 
 export default Layout;

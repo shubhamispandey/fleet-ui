@@ -1,6 +1,6 @@
 // DashboardLayout.tsx
 import { ReactNode } from "react";
-import Navbar from "@/components/dashboard/navbar/Navbar";
+import Navbar from "@components/dashboard/navbar/Navbar";
 
 const DashboardLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
