@@ -8,8 +8,14 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { useState, useEffect } from "react";
-import { Search, User, MessageSquare, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  Search,
+  User,
+  MessageSquare,
+  ChevronDown,
+  CheckCircle,
+} from "lucide-react";
 import Image from "next/image";
 
 interface SearchBarProps {
@@ -20,6 +26,7 @@ interface SearchBarProps {
 const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"people" | "chats">("people");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Debounced search
   useEffect(() => {
@@ -29,6 +36,24 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
     return () => clearTimeout(handler);
   }, [query, category, onSearch]);
 
+  // Hide results on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setQuery("");
+      }
+    }
+    if (query.trim()) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [query]);
+
   const handleCategorySelect = (selectedCategory: "people" | "chats") => {
     setCategory(selectedCategory);
     if (query.trim()) onSearch(query, selectedCategory);
@@ -37,7 +62,7 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
   console.log(searchResults);
 
   return (
-    <div className="relative w-full max-w-2xl md:mx-4">
+    <div ref={containerRef} className="relative w-full max-w-2xl md:mx-4">
       <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent">
         {/* Category Dropdown */}
         <Menu as="div" className="relative">
@@ -125,10 +150,11 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
           ) : searchResults.data.length > 0 ? (
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
               {searchResults.data.map((result) => {
-                const avatar = `/img/avatars/${result.avatar || "user.webp"}`;
-                console.log(avatar);
+                const { _id, avatar, email, name, isVerified, status } = result;
+                const avatarUrl = `/img/avatars/${avatar || "user.webp"}`;
+                const isOnline = status === "online";
                 return (
-                  <li key={result.email || result.name}>
+                  <li key={_id} className="cursor-pointer">
                     <button
                       className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
                       onClick={() => {
@@ -136,23 +162,36 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
                         // Handle result selection
                       }}
                     >
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 relative">
                         <Image
                           className="h-10 w-10 rounded-full object-cover"
-                          src={avatar}
-                          alt={result.name}
+                          src={avatarUrl}
+                          alt={name}
                           width={40}
                           height={40}
                         />
+                        {/* Online/Offline Dot */}
+                        <span
+                          className={`absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 ${
+                            isOnline ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                          title={isOnline ? "Online" : "Offline"}
+                        ></span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {result.name}
+                          {name}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                          {category === "people" ? result.email : ""}
+                          {category === "people" ? email : ""}
                         </p>
                       </div>
+                      {isVerified && (
+                        // Tick bold icon for verified users
+                        <div className="flex-shrink-0" title="Verified User">
+                          <CheckCircle className="text-green-500 w-5 h-5" />
+                        </div>
+                      )}
                     </button>
                   </li>
                 );

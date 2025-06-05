@@ -3,6 +3,7 @@ export interface UserType {
   name: string;
   avatar: string;
   email: string;
+  status: "online" | "offline";
   isVerified: boolean;
   createdAt: string;
   __v: number;
