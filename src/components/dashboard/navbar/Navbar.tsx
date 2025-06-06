@@ -14,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
-import { UsersType } from "@types";
+import { UsersType } from "../../../types";
 import useDashboard from "@hooks/useDashboard";
 import {
   Bell,
@@ -28,6 +28,7 @@ import {
 export default function Navbar() {
   const session = useSession();
   const user = useSelector((state: RootState) => state.users.user.data);
+  const isOnline = user?.status === "online";
   const [searchResults, setSearchResults] = useState<UsersType>({
     loading: false,
     data: [],
@@ -105,7 +106,10 @@ export default function Navbar() {
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
               <div>
-                <MenuButton className="flex rounded-full bg-gray-100 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <MenuButton
+                  className="flex rounded-full bg-gray-100 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  title={isOnline ? "Online" : "Offline"}
+                >
                   <span className="sr-only">Open user menu</span>
                   <div className="h-8 w-8 rounded-full overflow-hidden relative">
                     <Image
@@ -119,6 +123,11 @@ export default function Navbar() {
                       sizes="32px"
                     />
                   </div>
+                  <span
+                    className={`absolute bottom-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white dark:ring-gray-800  ${
+                      isOnline ? "bg-green-500" : "bg-red-400"
+                    }`}
+                  ></span>
                 </MenuButton>
               </div>
               <Transition
