@@ -15,8 +15,6 @@ const SocketManager = () => {
   const currentUser = useSelector((state: RootState) => state.users.user.data);
   const socketRef = useRef<ReturnType<typeof io> | null>(null);
 
-  console.log("SocketManager initialized with user:", currentUser);
-
   useEffect(() => {
     if (currentUser?._id && !socketRef.current) {
       console.log("Attempting Socket.IO connection to:", SOCKET_URL);

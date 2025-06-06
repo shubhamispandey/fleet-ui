@@ -3,11 +3,12 @@ export interface UserType {
   name: string;
   avatar: string;
   email: string;
-  status: "online" | "offline";
+  status: "online" | "offline" | "away";
   isVerified: boolean;
   createdAt: string;
   __v: number;
 }
+
 
 export interface UsersType {
   loading: boolean;
