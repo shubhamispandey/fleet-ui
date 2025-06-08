@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import List from "./List";
 import { Chat } from "./types";
 import { Plus, Search } from "lucide-react";
+import useDashboard from "@hooks/useDashboard";
+import { useSelector } from "react-redux";
+import { RootState } from "@redux/store";
 
 interface SidebarProps {
   chats: Chat[];
@@ -16,6 +19,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   setActiveChat,
   EmptyChatList,
 }) => {
+  const conversations = useSelector(
+    (state: RootState) => state.conversations.allConversations
+  );
+  console.log("Conversations from Redux:", conversations);
+  const { handleGetConversations } = useDashboard();
+
+  useEffect(handleGetConversations, [handleGetConversations]);
+
   return (
     <aside className="w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
       <div className="px-6 py-6 border-b border-gray-200 ">

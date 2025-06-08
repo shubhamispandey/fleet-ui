@@ -1,9 +1,14 @@
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import config from "@lib/config";
 import makeApiCall from "@lib/makeApi";
-import { UserResponseType, UsersType } from "@types";
-import { useCallback } from "react";
+import { UserResponseType, UsersType } from "../types";
+import actions from "@redux/actions";
+import { AppDispatch } from "@redux/store";
 
 const useDashboard = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const handleSearchNavbar = useCallback(
     async (
       query: string,
@@ -36,7 +41,16 @@ const useDashboard = () => {
     []
   );
 
-  return { handleSearchNavbar };
+  const handleGetConversations = useCallback(() => {
+    dispatch(actions.conversations.getConversationsThunk());
+    try {
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      // Handle error appropriately, e.g., show a notification
+    }
+  }, [dispatch]);
+
+  return { handleSearchNavbar, handleGetConversations };
 };
 
 export default useDashboard;

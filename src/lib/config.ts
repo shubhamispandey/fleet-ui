@@ -13,6 +13,9 @@ const config = {
       getCurrentUser: "/me",
       search: "/search",
     },
+    conversations: {
+      baseUrl: "/conversations",
+    },
     meet: {
       baseUrl: "/meet",
       createMeet: "/create-meet",

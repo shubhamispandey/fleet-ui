@@ -9,7 +9,7 @@ import {
   RegisterParams,
   VerifyOtpParams,
   ApiError,
-} from "@types";
+} from "../../types";
 
 const authEndPoints = config.apiEndPoints.auth;
 
@@ -23,7 +23,7 @@ export const registerThunk = createAsyncThunk(
     redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse = await makeApiCall({
+    const response: ApiResponse<unknown> = await makeApiCall({
       url: `${authEndPoints.baseUrl}${authEndPoints.register}`,
       method: "POST",
       data: payload,
@@ -48,7 +48,7 @@ export const verifyOtpThunk = createAsyncThunk(
     redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse = await makeApiCall({
+    const response: ApiResponse<unknown> = await makeApiCall({
       url: `${authEndPoints.baseUrl}${authEndPoints.verifyOtp}`,
       method: "POST",
       data: payload,
@@ -67,7 +67,7 @@ export const resendOtpThunk = createAsyncThunk(
   actionTypes.auth.RESENDOTP,
   async ({ payload }: { payload: Omit<VerifyOtpParams, "otp"> }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse = await makeApiCall({
+    const response: ApiResponse<unknown> = await makeApiCall({
       url: `${authEndPoints.baseUrl}${authEndPoints.resendOtp}`,
       method: "POST",
       data: payload,
@@ -91,7 +91,7 @@ export const loginThunk = createAsyncThunk(
     const { notify } = UseDrawers();
 
     try {
-      const response: ApiResponse = await makeApiCall({
+      const response: ApiResponse<unknown> = await makeApiCall({
         url: `${authEndPoints.baseUrl}${authEndPoints.login}`,
         method: "POST",
         data: payload,

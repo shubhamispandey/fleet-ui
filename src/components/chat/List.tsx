@@ -1,27 +1,17 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import ChatListItem from "./ListItem";
-import { Chat } from "./types";
+import { RootState } from "@redux/store";
 
-interface ChatListProps {
-  chats: Chat[];
-  activeChat: string | null;
-  setActiveChat: (id: string) => void;
-}
-
-const ChatList: React.FC<ChatListProps> = ({
-  chats,
-  activeChat,
-  setActiveChat,
-}) => {
+const ChatList: React.FC = ({}) => {
+  const conversations = useSelector(
+    (state: RootState) => state.conversations.allConversations
+  );
+  console.log("Conversations from Redux:", conversations);
   return (
     <ul className="py-2">
-      {chats.map((chat) => (
-        <ChatListItem
-          key={chat.id}
-          chat={chat}
-          isActive={activeChat === chat.id}
-          onClick={() => setActiveChat(chat.id)}
-        />
+      {conversations.data.conversations.map((conversation) => (
+        <ChatListItem key={conversation._id} conversation={conversation} />
       ))}
     </ul>
   );

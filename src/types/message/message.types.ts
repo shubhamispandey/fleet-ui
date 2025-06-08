@@ -13,6 +13,21 @@ export interface Conversation {
   unreadCount?: number;
 }
 
+export interface AllConversationState {
+  loading: boolean;
+  data: {
+    conversations: Conversation[];
+    page?: number;
+    limit?: number;
+    totalCount?: number;
+  };
+  error: string | null;
+}
+
+export interface ConversationsState {
+  allConversations: AllConversationState;
+}
+
 export interface Message {
   _id: string;
   conversationId: string;
