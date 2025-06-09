@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import ChatListItem from "./ListItem";
+import ConversationListItem from "./ConversationListItem";
 import { RootState } from "@redux/store";
 
-const ChatList: React.FC = ({}) => {
+const ConversationList: React.FC = ({}) => {
   const conversations = useSelector(
     (state: RootState) => state.conversations.allConversations
   );
@@ -11,10 +11,13 @@ const ChatList: React.FC = ({}) => {
   return (
     <ul className="py-2">
       {conversations.data.conversations.map((conversation) => (
-        <ChatListItem key={conversation._id} conversation={conversation} />
+        <ConversationListItem
+          key={conversation._id}
+          conversation={conversation}
+        />
       ))}
     </ul>
   );
 };
 
-export default ChatList;
+export default ConversationList;

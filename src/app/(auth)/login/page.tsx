@@ -11,7 +11,7 @@ import Input from "@components/input/Input";
 import useAuth from "@components/auth/useAuth";
 import useAuthHook from "@hooks/useAuth";
 import { LoginParams } from "../../../types";
-import Loader from "@components/loader/Loader";
+import Loader from "@components/page-loader/Loader";
 
 export default function LoginPage() {
   const [userData, setUserData] = useState<LoginParams>({

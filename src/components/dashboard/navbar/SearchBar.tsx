@@ -1,6 +1,6 @@
 "use client";
 
-import { UsersType } from "@types";
+import { useState, useEffect, useRef } from "react";
 import {
   Menu,
   MenuButton,
@@ -8,7 +8,6 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { useState, useEffect, useRef } from "react";
 import {
   Search,
   User,
@@ -17,6 +16,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Image from "next/image";
+import useDashboard from "@hooks/useDashboard";
+import { UsersType } from "../../../types";
 
 interface SearchBarProps {
   onSearch: (query: string, category: "people" | "chats") => void;
@@ -24,6 +25,8 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
+  const { handleSelectUser } = useDashboard();
+
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"people" | "chats">("people");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -154,7 +157,7 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
                       className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
                       onClick={() => {
                         setQuery("");
-                        // Handle result selection
+                        handleSelectUser(result);
                       }}
                     >
                       <div className="flex-shrink-0 relative">

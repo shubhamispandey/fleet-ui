@@ -24,8 +24,30 @@ export interface AllConversationState {
   error: string | null;
 }
 
+// ...existing code...
+
+export interface CreateConversationPayload {
+  type: "private" | "group";
+  participantId?: string;
+  participantIds?: string[];
+  name: string;
+}
+
+export interface GetConversationsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface SelectedConversationState {
+  loading: boolean;
+  data: Conversation | null;
+  error: string | null;
+}
+
 export interface ConversationsState {
   allConversations: AllConversationState;
+  selectedConversation: SelectedConversationState;
 }
 
 export interface Message {

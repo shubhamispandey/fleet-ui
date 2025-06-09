@@ -1,15 +1,22 @@
 import React from "react";
 import Image from "next/image";
-import { Conversation } from "../../types";
+import { Conversation } from "../../../types";
 import { useSelector } from "react-redux";
 import { RootState } from "@redux/store";
+import useDashboard from "@hooks/useDashboard";
 
 interface ConversationItemProps {
   conversation: Conversation;
 }
 
-const ChatListItem: React.FC<ConversationItemProps> = ({ conversation }) => {
+const ConversationListItem: React.FC<ConversationItemProps> = ({
+  conversation,
+}) => {
+  const { handleSelectConversation } = useDashboard();
   const user = useSelector((state: RootState) => state.users.user.data);
+  const selectedConversation = useSelector(
+    (state: RootState) => state.conversations.selectedConversation.data
+  );
   // const isGroup = conversation.type === "group";
   const participants = conversation.participants.filter(
     (participant) => user && participant._id !== user._id
@@ -19,6 +26,7 @@ const ChatListItem: React.FC<ConversationItemProps> = ({ conversation }) => {
   );
   const avatars = participants.map((participant) => participant.avatar);
   const unreadCount = conversation.unreadCount || 0;
+  const isActive = selectedConversation?._id === conversation._id;
 
   const getName = () => {
     if (conversation.type === "group") {
@@ -31,8 +39,9 @@ const ChatListItem: React.FC<ConversationItemProps> = ({ conversation }) => {
   return (
     <li
       className={`relative transition-all ${
-        true ? "bg-indigo-50 border-l-4 border-indigo-500" : ""
+        isActive ? "bg-indigo-50 border-l-4 border-indigo-500" : ""
       }`}
+      onClick={() => handleSelectConversation({ conversation })}
     >
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-indigo-50 transition-all">
         <div className="relative">
@@ -51,8 +60,7 @@ const ChatListItem: React.FC<ConversationItemProps> = ({ conversation }) => {
           <div className="flex items-center justify-between">
             <h2
               className={`font-semibold truncate ${
-                // isActive ? "text-indigo-700" : "text-gray-800"
-                true ? "text-indigo-700" : "text-gray-800"
+                isActive ? "text-indigo-700" : "text-gray-800"
               }`}
             >
               {getName()}
@@ -75,4 +83,4 @@ const ChatListItem: React.FC<ConversationItemProps> = ({ conversation }) => {
   );
 };
 
-export default ChatListItem;
+export default ConversationListItem;

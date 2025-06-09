@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 
-const Loader: React.FC = () => {
+const PageLoader: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-indigo-50 bg-opacity-90 z-50">
       <div className="flex flex-col items-center justify-center relative z-10">
@@ -44,4 +44,4 @@ const Loader: React.FC = () => {
   );
 };
 
-export default Loader;
+export default PageLoader;

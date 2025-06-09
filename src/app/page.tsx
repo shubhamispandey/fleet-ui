@@ -6,7 +6,7 @@ import useAuth from "@components/auth/useAuth";
 import Features from "@components/landing/features/Features";
 import Header from "@components/landing/header/Header";
 import Hero from "@components/landing/home/Home";
-import Loader from "@components/loader/Loader";
+import Loader from "@components/page-loader/Loader";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();

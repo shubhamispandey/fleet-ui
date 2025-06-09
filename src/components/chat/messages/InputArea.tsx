@@ -1,22 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Paperclip, Smile, ArrowUpRight } from "lucide-react";
 
-interface ChatInputProps {
-  inputValue: string;
-  setInputValue: (val: string) => void;
-  onSendMessage: (msg: string) => void;
-}
+const ChatInput = () => {
+  const [inputValue, setInputValue] = useState("");
 
-const ChatInput: React.FC<ChatInputProps> = ({
-  inputValue,
-  setInputValue,
-  onSendMessage,
-}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim() === "") return;
-    onSendMessage(inputValue);
+    // onSendMessage(inputValue);
+    setInputValue(""); // Clear input after sending
   };
+
   return (
     <form
       className="flex items-center gap-3 px-3 py-4 bg-white border-t border-gray-100 rounded-2xl shadow-lg w-full sticky bottom-0"

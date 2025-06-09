@@ -1,33 +1,22 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Header from "./Header";
-import Messages from "./Messages";
+// import Messages from "./Messages";
 import InputArea from "./InputArea";
-import { Message, Chat } from "./types";
+import { RootState } from "@redux/store";
 
-interface ContainerProps {
-  chats: Chat[];
-  messages: Message[];
-  activeChat: string | null;
-  onSendMessage: (msg: string) => void;
-  inputValue: string;
-  setInputValue: (val: string) => void;
-  showBackButton?: boolean;
-  onBack?: () => void;
-}
+const Container = ({}) => {
+  const selectedConversation = useSelector(
+    (state: RootState) => state.conversations.selectedConversation
+  );
+  const showBackButton = true;
+  const onBack = () => 1;
 
-const Container: React.FC<ContainerProps> = ({
-  chats,
-  messages,
-  activeChat,
-  onSendMessage,
-  inputValue,
-  setInputValue,
-  showBackButton,
-  onBack,
-}) => {
+  if (!selectedConversation.data) return null;
+
   return (
     <main className="flex-1 flex flex-col h-full relative bg-white">
-      {activeChat ? (
+      {selectedConversation ? (
         <>
           {showBackButton && (
             <button
@@ -50,13 +39,9 @@ const Container: React.FC<ContainerProps> = ({
               Back
             </button>
           )}
-          <Header chats={chats} activeChat={activeChat} />
-          <Messages messages={messages} />
-          <InputArea
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            onSendMessage={onSendMessage}
-          />
+          <Header />
+          {/* <Messages /> */}
+          <InputArea />
         </>
       ) : (
         <div className="flex flex-col items-center justify-center h-full">

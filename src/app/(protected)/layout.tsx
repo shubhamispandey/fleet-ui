@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@components/auth/useAuth";
-import Loader from "@components/loader/Loader";
+import Loader from "@components/page-loader/Loader";
 import SocketManager from "@components/socket-manager/SocketManager";
 import useUser from "@hooks/useUser";
 
