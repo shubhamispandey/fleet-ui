@@ -3,7 +3,7 @@ import actionTypes from "../actionTypes";
 import UseDrawers from "@hooks/useDrawers";
 import config from "@lib/config";
 import makeApiCall from "@lib/makeApi";
-import { ApiResponse, createMeetParams, getMeetInfoParams } from "@types";
+import { ApiResponse, createMeetParams, getMeetInfoParams } from "../../types";
 
 const meetEndPoints = config.apiEndPoints.meet;
 
@@ -26,7 +26,7 @@ export const createMeetThunk = createAsyncThunk(
     redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse = await makeApiCall({
+    const response: ApiResponse<{ meetingCode: string }> = await makeApiCall({
       url: `${meetEndPoints.baseUrl}${meetEndPoints.createMeet}`,
       method: "POST",
       data: payload,
@@ -39,9 +39,7 @@ export const createMeetThunk = createAsyncThunk(
       response.status === 201 &&
       (response.data as { meetingCode?: string }).meetingCode
     ) {
-      redirect(
-        `/auth/meet/${(response.data as { meetingCode: string }).meetingCode}`
-      );
+      redirect(`/auth/meet/${response.data.meetingCode}`);
     }
 
     return response.data;
@@ -58,7 +56,7 @@ export const getMeetInfoThunk = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response: ApiResponse = await makeApiCall({
+      const response: ApiResponse<null> = await makeApiCall({
         url: `${meetEndPoints.baseUrl}${meetEndPoints.getMeetInfo}`,
         method: "POST",
         data: payload,

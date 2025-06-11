@@ -12,7 +12,7 @@ import Button from "@components/button/Button";
 import Input from "@components/input/Input";
 import useAuth from "@components/auth/useAuth";
 import Loader from "@components/page-loader/Loader";
-import { RegisterParams } from "@types";
+import { RegisterParams } from "../../../types";
 import AvatarSelector from "@components/avatar-selector/Avatar";
 import { RootState } from "@redux/store";
 

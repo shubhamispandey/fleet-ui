@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import actions from "@redux/actions";
 import { AppDispatch } from "@redux/store";
-import { createMeetParams, getMeetInfoParams } from "@types";
+import { createMeetParams, getMeetInfoParams } from "../types";
 
 const useMeet = () => {
   const dispatch = useDispatch<AppDispatch>();

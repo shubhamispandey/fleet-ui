@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { NotifyProps } from "@types";
+import { NotifyProps } from "../types";
 
 const UseDrawers = () => {
   const notify = ({ message, type }: NotifyProps) => {

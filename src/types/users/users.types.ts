@@ -1,10 +1,10 @@
 export interface UserType {
   _id: string;
   name: string;
-  avatar: string;
   email: string;
-  status: "online" | "offline" | "away";
+  avatar: string;
   isVerified: boolean;
+  status: "online" | "offline" | "away";
   createdAt: string;
   __v: number;
 }
