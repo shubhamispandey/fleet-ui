@@ -1,16 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import Header from "./Header";
-// import Messages from "./Messages";
+import Messages from "./Messages";
 import InputArea from "./InputArea";
-import { RootState } from "@redux/store";
+import useDashboard from "@hooks/useDashboard";
 
-const Container = ({}) => {
-  const selectedConversation = useSelector(
-    (state: RootState) => state.conversations.selectedConversation
-  );
-  const showBackButton = true;
-  const onBack = () => 1;
+const Container = () => {
+  const { selectedConversation, handleSelectConversation } = useDashboard();
+  const showBackButton = !!selectedConversation.data;
+  const onBack = () => handleSelectConversation({ conversation: null });
 
   if (!selectedConversation.data) return null;
 
@@ -40,7 +37,7 @@ const Container = ({}) => {
             </button>
           )}
           <Header />
-          {/* <Messages /> */}
+          <Messages />
           <InputArea />
         </>
       ) : (

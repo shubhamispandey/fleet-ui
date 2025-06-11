@@ -1,19 +1,19 @@
 import React from "react";
 import Image from "next/image";
-import { Check, CheckCircle, Eye } from "lucide-react";
-import { Message as MessageType } from "./types";
+import { MessageType } from "../../../types";
 
 interface MessageProps {
   message: MessageType;
   isGroupChat?: boolean;
+  currentUserId: string;
 }
 
-const Message: React.FC<MessageProps> = ({ message, isGroupChat = false }) => {
-  const isSelf = message.sender === "self";
-  let StatusIcon = null;
-  if (message.status === "sent") StatusIcon = Check;
-  else if (message.status === "delivered") StatusIcon = CheckCircle;
-  else if (message.status === "read") StatusIcon = Eye;
+const Message: React.FC<MessageProps> = ({
+  message,
+  isGroupChat = false,
+  currentUserId,
+}) => {
+  const isSelf = message.senderId._id === currentUserId;
 
   return (
     <div
@@ -24,15 +24,17 @@ const Message: React.FC<MessageProps> = ({ message, isGroupChat = false }) => {
           <Image
             className="w-5 h-5 rounded-full border border-indigo-100 shadow-sm"
             alt="User Avatar"
-            src={message.avatar || "/img/avatars/default.webp"}
+            src={message.senderId.avatar || "/img/avatars/default.webp"}
             width={20}
             height={20}
           />
         )}
         {!isSelf && isGroupChat && (
-          <span className="font-medium text-indigo-600">{message.sender}</span>
+          <span className="font-medium text-indigo-600">
+            {message.senderId.name}
+          </span>
         )}
-        <span>{message.timestamp}</span>
+        <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
       </div>
       <div
         className={`max-w-[85vw] md:max-w-[65vw] px-4 py-3 rounded-2xl shadow-sm ${
@@ -43,12 +45,6 @@ const Message: React.FC<MessageProps> = ({ message, isGroupChat = false }) => {
       >
         {message.content}
       </div>
-      {isSelf && message.status && StatusIcon && (
-        <div className="text-xs mt-1 flex items-center gap-1 text-gray-400">
-          <StatusIcon size={14} className="text-xs" />
-          <span className="capitalize">{message.status}</span>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { Paperclip, Smile, ArrowUpRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@redux/store";
+import SOCKET_EVENTS from "@lib/socketEvents";
+import useDashboard from "@hooks/useDashboard";
 
 const ChatInput = () => {
+  const { recipient } = useDashboard();
   const [inputValue, setInputValue] = useState("");
+  const socket = useSelector((state: RootState) => state.socket.socket);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim() === "") return;
-    // onSendMessage(inputValue);
-    setInputValue(""); // Clear input after sending
+    console.log(socket, socket?.emit);
+    socket?.emit(SOCKET_EVENTS.SEND_PRIVATE_MESSAGE, {
+      receiverId: recipient?._id,
+      content: inputValue,
+    });
+    setInputValue("");
   };
 
   return (

@@ -3,10 +3,11 @@
 
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-import { setStatus } from "@redux/slices/usersSlice"; // For presence updates
-import SOCKET_EVENTS from "@lib/socketEvents"; // Your socket events map
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { setSocket } from "@redux/slices/socketSlice";
+import registerConnectionEvents from "./helper-events/connection";
+import registerMessageEvents from "./helper-events/conversation";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL; // Make sure this matches your backend
 
@@ -27,31 +28,9 @@ const SocketManager = () => {
       });
 
       socketRef.current = newSocket;
-
-      newSocket.on("connect", () => {
-        dispatch(setStatus("online"));
-      });
-
-      newSocket.on("disconnect", () => {
-        dispatch(setStatus("offline"));
-      });
-
-      // --- Global Socket Event Listeners (for presence) ---
-      newSocket.on(SOCKET_EVENTS.USER_ONLINE, ({ userId, status }) => {
-        // This will be handled in Dashboard.tsx for allUsers list
-        console.log(`User ${userId} is now ${status}`);
-      });
-
-      newSocket.on(SOCKET_EVENTS.USER_OFFLINE, ({ userId, status }) => {
-        // This will be handled in Dashboard.tsx for allUsers list
-        console.log(`User ${userId} is now ${status}`);
-      });
-
-      // Add other global listeners here (e.g., for notifications, general errors)
-      newSocket.on(SOCKET_EVENTS.CHAT_ERROR, (errorData) => {
-        console.error("Global Chat Error:", errorData.message);
-        // You might dispatch an action to show a global notification/toast
-      });
+      dispatch(setSocket(newSocket));
+      registerConnectionEvents(newSocket, { dispatch });
+      registerMessageEvents(newSocket, { dispatch });
 
       // Cleanup on unmount or when user logs out
       return () => {

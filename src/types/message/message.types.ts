@@ -5,12 +5,12 @@ export interface Conversation {
   participants: UserType[];
   type: "private" | "group";
   name?: string;
-  groupAdmin?: string;
+  groupAdmin?: UserType;
+  lastMessage: MessageType | null;
+  lastActivityAt: string;
   createdAt: string;
   updatedAt: string;
-  lastMessageContent?: string;
-  lastMessageTimestamp?: string;
-  unreadCount?: number;
+  __v: number;
 }
 
 export interface AllConversationState {
@@ -45,16 +45,50 @@ export interface SelectedConversationState {
   error: string | null;
 }
 
+interface MessageSender {
+  _id: string;
+  name: string;
+  avatar: string;
+}
+
+export interface MessageType {
+  type: string;
+  _id: string;
+  conversationId: string;
+  senderId: MessageSender;
+  content: string;
+  readBy: string[];
+  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface MessageResponseData {
+  messages: MessageType[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
+
+export interface MessagesState {
+  loading: boolean;
+  data: {
+    messages: Record<string, MessageType[]>;
+  };
+  error: string | null;
+}
+
 export interface ConversationsState {
   allConversations: AllConversationState;
   selectedConversation: SelectedConversationState;
+  messages: MessagesState;
 }
 
-export interface Message {
-  _id: string;
-  conversationId: string;
-  senderId: UserType;
-  content: string;
-  timestamp: string;
-  readBy?: string[];
+export interface GetMessagesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
 }
+
+export type HandleGetMessages = (params?: GetMessagesParams) => void;

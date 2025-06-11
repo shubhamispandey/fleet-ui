@@ -7,7 +7,7 @@ const ConversationList: React.FC = ({}) => {
   const conversations = useSelector(
     (state: RootState) => state.conversations.allConversations
   );
-  console.log("Conversations from Redux:", conversations);
+
   return (
     <ul className="py-2">
       {conversations.data.conversations.map((conversation) => (

@@ -15,6 +15,7 @@ const config = {
     },
     conversations: {
       baseUrl: "/conversations",
+      getMessages: (conversationId: string) => `/${conversationId}/messages`,
     },
     meet: {
       baseUrl: "/meet",

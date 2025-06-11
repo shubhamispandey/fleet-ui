@@ -1,8 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 import { Conversation } from "../../../types";
-import { useSelector } from "react-redux";
-import { RootState } from "@redux/store";
 import useDashboard from "@hooks/useDashboard";
 
 interface ConversationItemProps {
@@ -12,29 +11,37 @@ interface ConversationItemProps {
 const ConversationListItem: React.FC<ConversationItemProps> = ({
   conversation,
 }) => {
-  const { handleSelectConversation } = useDashboard();
-  const user = useSelector((state: RootState) => state.users.user.data);
-  const selectedConversation = useSelector(
-    (state: RootState) => state.conversations.selectedConversation.data
-  );
-  // const isGroup = conversation.type === "group";
-  const participants = conversation.participants.filter(
-    (participant) => user && participant._id !== user._id
-  );
-  const isOnline = participants.some(
-    (participant) => participant.status === "online"
-  );
-  const avatars = participants.map((participant) => participant.avatar);
-  const unreadCount = conversation.unreadCount || 0;
-  const isActive = selectedConversation?._id === conversation._id;
+  const { selectedConversation, currentUser, handleSelectConversation } =
+    useDashboard();
+  const isActive = selectedConversation.data?._id === conversation._id;
 
-  const getName = () => {
-    if (conversation.type === "group") {
-      return conversation.name || "Group Chat";
-    } else {
-      return participants?.[0]?.name || "Unknown User";
-    }
-  };
+  // Local logic separated from JSX
+  const participants = conversation.participants.filter(
+    (p) => currentUser && p._id !== currentUser._id
+  );
+  const isOnline = participants.some((p) => p.status === "online");
+  const avatars = participants.map((p) => p.avatar);
+  const displayName =
+    conversation.type === "group"
+      ? conversation.name || "Group Chat"
+      : participants?.[0]?.name || "Unknown User";
+
+  const lastMessageSenderName =
+    conversation.lastMessage?.senderId._id === currentUser?._id
+      ? "You"
+      : conversation.lastMessage?.senderId.name;
+  const lastMessageContent = conversation.lastMessage?.content || "";
+  const lastMessageTime = conversation.lastMessage?.createdAt
+    ? formatDistanceToNow(new Date(conversation.lastMessage.createdAt), {
+        addSuffix: true,
+      })
+    : "";
+
+  // const unreadCount = currentUser?._id
+  //   ? conversation.lastMessage?.readBy?.includes(currentUser?._id)
+  //     ? 0
+  //     : 1
+  //   : 0;
 
   return (
     <li
@@ -47,13 +54,13 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
         <div className="relative">
           <Image
             className="w-12 h-12 rounded-xl border border-indigo-100 shadow-sm"
-            alt={`${conversation.name}'s Avatar`}
+            alt={`${displayName}'s Avatar`}
             src={`/img/avatars/${avatars?.[0] ?? "user.webp"}`}
             width={48}
             height={48}
           />
           {isOnline && (
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -63,21 +70,23 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
                 isActive ? "text-indigo-700" : "text-gray-800"
               }`}
             >
-              {getName()}
+              {displayName}
             </h2>
-            <span className="text-xs text-gray-400 whitespace-nowrap">
-              {conversation.lastMessageTimestamp}
+            <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
+              {lastMessageTime}
             </span>
           </div>
-          <p className="text-sm text-gray-500 truncate">
-            {conversation.lastMessageContent}
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500 truncate">
+              {lastMessageSenderName}: {lastMessageContent}
+            </p>
+            {/* {unreadCount > 0 && (
+              <span className="ml-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )} */}
+          </div>
         </div>
-        {unreadCount > 0 && (
-          <span className="bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount}
-          </span>
-        )}
       </div>
     </li>
   );

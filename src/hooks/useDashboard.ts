@@ -7,18 +7,68 @@ import actions from "@redux/actions";
 import {
   Conversation,
   CreateConversationPayload,
+  HandleGetMessages,
   UserResponseType,
   UsersType,
   UserType,
 } from "../types";
 
+import { useMemo } from "react";
+
 const useDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const conversations = useSelector(
-    (state: RootState) => state.conversations.allConversations
+
+  const {
+    allConversations: conversations,
+    selectedConversation,
+    messages,
+  } = useSelector((state: RootState) => state.conversations);
+
+  // ID of the currently selected conversation
+  const conversationId = selectedConversation?.data?._id;
+
+  const hasConversationMessages =
+    conversationId && messages.data.messages?.[conversationId];
+
+  // Array of messages for the selected conversation
+  const selectedConversationMessages = useMemo(
+    () =>
+      hasConversationMessages ? messages.data.messages[conversationId] : [],
+    [hasConversationMessages, messages.data.messages, conversationId]
   );
+
+  // Message object including data for current conversation
+  const conversationMessages = useMemo(
+    () => ({
+      ...messages,
+      data: {
+        ...messages.data,
+        messages: {
+          ...messages.data.messages,
+          ...(conversationId
+            ? {
+                [conversationId]: selectedConversationMessages,
+              }
+            : {}),
+        },
+      },
+    }),
+    [conversationId, messages, selectedConversationMessages]
+  );
+
+  // Logged-in user object
   const currentUser = useSelector((state: RootState) => state.users.user.data);
 
+  // Other users in the current conversation (excludes current user)
+  const recipientUsers =
+    selectedConversation.data?.participants.filter(
+      (p) => p._id !== currentUser?._id
+    ) ?? [];
+
+  // Single recipient user (used in private chat context)
+  const recipient = !!recipientUsers?.length ? recipientUsers?.[0] : null;
+
+  // HANDLE: Search users or chats from navbar
   const handleSearchNavbar = useCallback(
     async (
       query: string,
@@ -51,6 +101,7 @@ const useDashboard = () => {
     []
   );
 
+  // HANDLE: Fetch all conversations for the current user
   const handleGetConversations = useCallback(
     ({ search = "" }) => {
       try {
@@ -67,6 +118,7 @@ const useDashboard = () => {
     [dispatch]
   );
 
+  // HANDLE: Create a new conversation (group/private)
   const handleCreateConversation = useCallback(
     ({ participantId, type, name }: CreateConversationPayload) => {
       try {
@@ -87,10 +139,11 @@ const useDashboard = () => {
     [dispatch]
   );
 
+  // HANDLE: Select an existing conversation
   const handleSelectConversation = ({
     conversation,
   }: {
-    conversation: Conversation;
+    conversation: Conversation | null;
   }) => {
     dispatch(
       actions.conversations.selectConversation({
@@ -101,6 +154,7 @@ const useDashboard = () => {
     );
   };
 
+  // HANDLE: Select a user to either continue or start a conversation
   const handleSelectUser = (user: UserType) => {
     const conversation = conversations.data.conversations.find(
       (conv: Conversation) =>
@@ -120,12 +174,38 @@ const useDashboard = () => {
     }
   };
 
+  // HANDLE: Fetch messages for the selected conversation
+  const handleGetMessages: HandleGetMessages = useCallback(() => {
+    try {
+      if (!conversationId || selectedConversationMessages.length) return;
+      dispatch(
+        actions.conversations.getMessagesThunk({
+          conversationId,
+        })
+      );
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      // Handle error appropriately, e.g., show a notification
+    }
+  }, [conversationId, selectedConversationMessages.length, dispatch]);
+
   return {
+    // FUNCTIONS
     handleSearchNavbar,
     handleGetConversations,
     handleCreateConversation,
     handleSelectUser,
     handleSelectConversation,
+    handleGetMessages,
+
+    // UTILS
+    conversationId,
+    selectedConversation,
+    conversationMessages,
+    selectedConversationMessages,
+    currentUser,
+    recipientUsers,
+    recipient,
   };
 };
 
