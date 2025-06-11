@@ -14,7 +14,7 @@ function VerifyOtpInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams?.get("email");
-  const { verifyOtp } = UseAuth();
+  const { verifyOtp, resendOtp } = UseAuth();
 
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -62,6 +62,8 @@ function VerifyOtpInner() {
     }
     verifyOtp({ email: email as string, otp: otpString }, router.push);
   };
+
+  const handleResendOtp = () => email && resendOtp(email);
 
   return (
     <div className="flex min-h-screen flex-col justify-center px-6 py-10 lg:px-8 bg-white">
@@ -113,7 +115,10 @@ function VerifyOtpInner() {
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
             Didn&apos;t receive the OTP?{" "}
-            <button className="font-semibold text-indigo-600 hover:text-indigo-500">
+            <button
+              className="font-semibold text-indigo-600 hover:text-indigo-500"
+              onClick={handleResendOtp}
+            >
               Resend OTP
             </button>
           </p>

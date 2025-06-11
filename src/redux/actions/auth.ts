@@ -48,17 +48,27 @@ export const verifyOtpThunk = createAsyncThunk(
     redirect: (path: string) => void;
   }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse<unknown> = await makeApiCall({
-      url: `${authEndPoints.baseUrl}${authEndPoints.verifyOtp}`,
-      method: "POST",
-      data: payload,
-    });
-    notify({
-      message: response.message,
-      type: response.status === 200 ? "success" : "error",
-    });
-    if (response.status === 200) {
-      redirect("/login");
+    try {
+      const response: ApiResponse<unknown> = await makeApiCall({
+        url: `${authEndPoints.baseUrl}${authEndPoints.verifyOtp}`,
+        method: "POST",
+        data: payload,
+      });
+      notify({
+        message: response.message,
+        type: response.status === 200 ? "success" : "error",
+      });
+      if (response.status === 200) {
+        redirect("/login");
+      }
+    } catch (error) {
+      notify({
+        message:
+          (error as ApiError)?.response?.data?.message ||
+          "An error occurred while verifying OTP. Please try again.",
+        type: "error",
+      });
+      throw error;
     }
   }
 );
@@ -67,15 +77,25 @@ export const resendOtpThunk = createAsyncThunk(
   actionTypes.auth.RESENDOTP,
   async ({ payload }: { payload: Omit<VerifyOtpParams, "otp"> }) => {
     const { notify } = UseDrawers();
-    const response: ApiResponse<unknown> = await makeApiCall({
-      url: `${authEndPoints.baseUrl}${authEndPoints.resendOtp}`,
-      method: "POST",
-      data: payload,
-    });
-    notify({
-      message: response.message,
-      type: response.status === 200 ? "success" : "error",
-    });
+    try {
+      const response: ApiResponse<unknown> = await makeApiCall({
+        url: `${authEndPoints.baseUrl}${authEndPoints.resendOtp}`,
+        method: "POST",
+        data: payload,
+      });
+      notify({
+        message: response.message,
+        type: response.status === 200 ? "success" : "error",
+      });
+    } catch (error) {
+      notify({
+        message:
+          (error as ApiError)?.response?.data?.message ||
+          "An error occurred while resending OTP. Please try again.",
+        type: "error",
+      });
+      throw error;
+    }
   }
 );
 
