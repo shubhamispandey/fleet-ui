@@ -26,7 +26,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   if (!isLoading && !isAuthenticated) {
     if (typeof window !== "undefined") {
-      router.push("/login");
+      console.log(!isLoading, !isAuthenticated);
+      // router.push("/login");
     }
     return null;
   }

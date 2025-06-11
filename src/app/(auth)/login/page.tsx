@@ -12,6 +12,8 @@ import useAuth from "@components/auth/useAuth";
 import useAuthHook from "@hooks/useAuth";
 import { LoginParams } from "../../../types";
 import Loader from "@components/page-loader/Loader";
+import { useSelector } from "react-redux";
+import { RootState } from "@redux/store";
 
 export default function LoginPage() {
   const [userData, setUserData] = useState<LoginParams>({
@@ -21,6 +23,9 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuthHook();
   const { isAuthenticated, isLoading } = useAuth();
+  const isLoggingIn = useSelector(
+    (state: RootState) => state.auth.login.loading
+  );
 
   useLayoutEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -87,7 +92,7 @@ export default function LoginPage() {
               label="Login"
               className="mt-4"
               fullWidth={true}
-              loading={false}
+              loading={isLoggingIn}
               onClick={handleLogin}
             />
           </div>
