@@ -11,8 +11,8 @@ const Videos: React.FC<VideosProps> = ({ socket, room }) => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  // const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  // const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
@@ -58,7 +58,7 @@ const Videos: React.FC<VideosProps> = ({ socket, room }) => {
           ? { deviceId: { exact: selectedAudioDevice } }
           : true,
       });
-      setLocalStream(stream);
+      // setLocalStream(stream);
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -76,7 +76,7 @@ const Videos: React.FC<VideosProps> = ({ socket, room }) => {
       // Handle remote stream
       peerConnection.ontrack = (event) => {
         const [newRemoteStream] = event.streams;
-        setRemoteStream(newRemoteStream);
+        // setRemoteStream(newRemoteStream);
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = newRemoteStream;
         }

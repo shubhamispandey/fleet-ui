@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, Suspense } from "react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Button from "@components/button/Button";
 import UseAuth from "@hooks/useAuth";
 import useAuth from "@components/auth/useAuth";
 import Loader from "@components/page-loader/Loader";
 
-export default function VerifyOtpPage() {
+function VerifyOtpInner() {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [otpError, setOtpError] = useState<string | null>(null);
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([]); // Refs for the inputs
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams?.get("email");
@@ -28,30 +28,20 @@ export default function VerifyOtpPage() {
 
   const handleChange = (value: string, index: number) => {
     const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // Ensure only one character per box
-
-    // Move focus to the next input if one character is entered
+    newOtp[index] = value.slice(-1);
     if (value && index < otpRefs.current.length - 1) {
       otpRefs.current[index + 1]?.focus();
       otpRefs.current[index + 1]?.select();
     }
-
     setOtp(newOtp);
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const pastedData = e.clipboardData.getData("text");
     if (pastedData.length === 6) {
-      const newOtp = pastedData.split("").slice(0, 6); // Take only first 6 digits
+      const newOtp = pastedData.split("").slice(0, 6);
       setOtp(newOtp);
-
-      // Populate the fields and move focus to the last one
-      newOtp.forEach((value, index) => {
-        if (otpRefs.current[index]) {
-          otpRefs.current[index]!.value = value;
-        }
-      });
-      otpRefs.current[5]?.focus(); // Focus last input
+      otpRefs.current[5]?.focus();
     }
   };
 
@@ -70,7 +60,6 @@ export default function VerifyOtpPage() {
       setOtpError("Please enter a valid 6-digit OTP.");
       return;
     }
-
     verifyOtp({ email: email as string, otp: otpString }, router.push);
   };
 
@@ -84,7 +73,6 @@ export default function VerifyOtpPage() {
           Enter the 6-digit OTP sent to your email: <strong>{email}</strong>
         </p>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
         <form
           className="space-y-4"
@@ -97,22 +85,23 @@ export default function VerifyOtpPage() {
             {otp.map((_, index) => (
               <input
                 key={index}
-                ref={(el: HTMLInputElement | null): void => {
+                ref={(el) => {
                   otpRefs.current[index] = el;
                 }}
                 type="text"
+                inputMode="numeric"
+                pattern="\d*"
                 maxLength={1}
                 value={otp[index]}
                 onChange={(e) => handleChange(e.target.value, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                onPaste={index === 0 ? handlePaste : undefined} // Only allow pasting in the first input
+                onPaste={index === 0 ? handlePaste : undefined}
                 className="text-center text-slate-800 h-12 w-full rounded border border-gray-400 focus-visible:outline-indigo-500 text-lg"
+                aria-label={`OTP digit ${index + 1}`}
               />
             ))}
           </div>
-
           {otpError && <p className="text-red-500 text-sm">{otpError}</p>}
-
           <Button
             kind="primary"
             label="Verify OTP"
@@ -121,7 +110,6 @@ export default function VerifyOtpPage() {
             onClick={handleVerifyOtp}
           />
         </form>
-
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
             Didn&apos;t receive the OTP?{" "}
@@ -132,5 +120,13 @@ export default function VerifyOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <VerifyOtpInner />
+    </Suspense>
   );
 }

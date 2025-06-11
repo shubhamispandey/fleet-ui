@@ -26,6 +26,7 @@ type InputProps = {
   isHelperTextVisible?: boolean;
   state?: "default" | "error" | "success";
   helperText?: string;
+  customRef?: React.MutableRefObject<null>;
 };
 
 const Input: FC<InputProps> = ({
@@ -40,7 +41,7 @@ const Input: FC<InputProps> = ({
   onFocus,
   onBlur,
   onKeyDown,
-  ref,
+  customRef,
   maxLength,
   parentStyle,
   inputStyle,
@@ -64,6 +65,7 @@ const Input: FC<InputProps> = ({
       )}
       <div className="mt-2">
         <input
+          ref={customRef}
           id={id}
           name={id}
           type={type}

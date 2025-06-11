@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { redirect } from "next/navigation";
 import useAuth from "@components/auth/useAuth";
 import Features from "@components/landing/features/Features";

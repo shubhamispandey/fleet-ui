@@ -3,7 +3,7 @@ import { createMeetThunk, getMeetInfoThunk } from "../actions/meet";
 
 interface MeetingState {
   loading: boolean;
-  data: any;
+  data: unknown;
 }
 
 interface RootState {
@@ -30,7 +30,7 @@ const meetSlice = createSlice({
       })
       .addCase(createMeetThunk.fulfilled, (state, action) => {
         state.meeting.loading = false;
-        state.meeting.data = action.payload.data;
+        state.meeting.data = action.payload;
       })
       .addCase(createMeetThunk.rejected, (state) => {
         state.meeting.loading = false;

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./Header.module.css";
 import { useRouter } from "next/navigation";
-import { Menu, Circle, LogIn } from "lucide-react"; // Add this import at the top with others
+import { Menu, LogIn } from "lucide-react"; // Add this import at the top with others
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
