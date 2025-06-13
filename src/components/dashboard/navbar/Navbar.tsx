@@ -45,7 +45,7 @@ export default function Navbar() {
   );
 
   const handleSignOut = () => {
-    signOut();
+    signOut({ callbackUrl: "/" });
     localStorage.clear();
   };
 

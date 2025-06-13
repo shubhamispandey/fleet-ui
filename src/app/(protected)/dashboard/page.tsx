@@ -20,12 +20,12 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row h-[calc(100vh-66px)] bg-gray-50">
+    <>
       {/* Sidebar */}
       {(!isMobile || !selectedConversation.data) && <Conversations />}
       {/* Chat Area */}
       {(!isMobile || selectedConversation.data) && <Container />}
-    </div>
+    </>
   );
 };
 

@@ -92,7 +92,7 @@ const Header = () => {
 
           <ul
             id="nav"
-            className={`fixed top-0 h-screen w-72 gap-2 bg-gray-100 transition-all duration-300 p-7 flex flex-col text-lg ${
+            className={`fixed top-0 h-dvh w-72 gap-2 bg-gray-100 transition-all duration-300 p-7 flex flex-col text-lg ${
               isMenuOpen ? "left-0" : "-left-full"
             } md:flex md:flex-row md:h-auto md:top-0 md:left-0 md:items-center md:gap-8 md:static md:opacity-100 md:w-auto md:bg-transparent md:p-0`}
           >

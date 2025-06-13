@@ -12,7 +12,7 @@ const Container = () => {
   if (!selectedConversation.data) return null;
 
   return (
-    <main className="flex-1 flex flex-col h-full relative bg-white">
+    <main className="flex-1 flex flex-col relative bg-white">
       {selectedConversation ? (
         <>
           {showBackButton && (

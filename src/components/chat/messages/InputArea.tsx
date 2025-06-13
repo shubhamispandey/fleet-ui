@@ -23,7 +23,7 @@ const ChatInput = () => {
 
   return (
     <form
-      className="flex items-center gap-3 px-3 py-4 bg-white border-t border-gray-100 rounded-2xl shadow-lg w-full sticky bottom-0"
+      className="flex items-center gap-3 px-3 py-4 bg-white border-t-2 border-gray-100 rounded-2xl shadow-xl w-full"
       onSubmit={handleSubmit}
     >
       <div className="hidden md:flex items-center gap-2 px-2 w-auto">

@@ -48,6 +48,22 @@ body {
   background: #334155;
 }
 
+.container {
+  max-width: 90%;
+}
+
+@media (min-width: 350px) {
+  .container {
+    max-width: 85%;
+  }
+}
+
+@media (min-width: 756px) {
+  .container {
+    max-width: 80%;
+  }
+}
+
 @media (min-width: 1536px) {
   .container {
     max-width: 1336px;

@@ -78,17 +78,19 @@ const MessagesList = () => {
   );
 
   return (
-    <div
-      ref={containerRef}
-      className="flex-1 overflow-y-auto px-4 py-6 space-y-6"
-    >
-      {conversationMessages.loading ? (
-        <LoadingSkeleton />
-      ) : !allMessages.length ? (
-        <EmptyState />
-      ) : (
-        renderMessages()
-      )}
+    <div className="flex-1 overflow-hidden">
+      <div
+        ref={containerRef}
+        className="overflow-auto h-full px-4 py-6 space-y-6"
+      >
+        {conversationMessages.loading ? (
+          <LoadingSkeleton />
+        ) : !allMessages.length ? (
+          <EmptyState />
+        ) : (
+          renderMessages()
+        )}
+      </div>
     </div>
   );
 };
