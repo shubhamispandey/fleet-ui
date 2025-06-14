@@ -13,7 +13,6 @@ const ChatInput = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim() === "") return;
-    console.log(socket, socket?.emit);
     socket?.emit(SOCKET_EVENTS.SEND_PRIVATE_MESSAGE, {
       receiverId: recipient?._id,
       content: inputValue,

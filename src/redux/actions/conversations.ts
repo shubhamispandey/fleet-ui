@@ -7,7 +7,6 @@ import {
   ApiError,
   ApiResponse,
   Conversation,
-  CreateConversationPayload,
   GetConversationsParams,
   GetMessagesParams,
   MessageResponseData,
@@ -27,28 +26,6 @@ export const getConversationsThunk = createAsyncThunk(
         params: { page, limit, search },
       });
       return response.data as Conversation[];
-    } catch (error: unknown) {
-      const errorMessage = "An error occurred.";
-
-      notify({
-        message: (error as ApiError).response?.data?.message ?? errorMessage,
-        type: "error",
-      });
-      throw new Error(errorMessage);
-    }
-  }
-);
-
-export const createConversationThunk = createAsyncThunk(
-  actionTypes.conversations.CREATE_CONVERSATION,
-  async ({ payload }: { payload: CreateConversationPayload }) => {
-    try {
-      const response: ApiResponse<unknown> = await makeApiCall({
-        url: conversationsEndPoints.baseUrl,
-        method: "POST",
-        data: payload,
-      });
-      return response.data;
     } catch (error: unknown) {
       const errorMessage = "An error occurred.";
 

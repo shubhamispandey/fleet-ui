@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  createConversationThunk,
   getConversationsThunk,
   getMessagesThunk,
   selectConversation,
 } from "../actions/conversations";
-import { Conversation, ConversationsState } from "../../types/";
+import { ConversationsState } from "../../types/";
 
 const initialState: ConversationsState = {
   allConversations: {
@@ -45,10 +44,13 @@ const conversationsSlice = createSlice({
       if (state.selectedConversation.data)
         state.selectedConversation.data.lastMessage = message;
     },
+    setRecievedConversation: (state, action) => {
+      state.allConversations.data.conversations.unshift(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
-      // 1.HANDLE GET CONVERSATIONS
+      // 1 HANDLE GET CONVERSATIONS
       .addCase(getConversationsThunk.pending, (state) => {
         state.allConversations.loading = true;
       })
@@ -67,26 +69,7 @@ const conversationsSlice = createSlice({
       .addCase(getConversationsThunk.rejected, (state) => {
         state.allConversations.loading = false;
       })
-      // 2.HANDLE CREATE CONVERSATION
-      .addCase(createConversationThunk.pending, (state) => {
-        state.selectedConversation.loading = true;
-      })
-      .addCase(createConversationThunk.fulfilled, (state, action) => {
-        // 2.a SET SELECTED CONVERSATION
-        state.selectedConversation.loading = false;
-        state.selectedConversation.data = action.payload as Conversation;
-        state.selectedConversation.error = null;
 
-        // 2.b ADD NEW CONVERSATION TO ALL CONVERSATIONS AT THE TOP
-        state.allConversations.data.conversations.unshift(
-          action.payload as Conversation
-        );
-      })
-      .addCase(createConversationThunk.rejected, (state, action) => {
-        state.selectedConversation.loading = false;
-        state.selectedConversation.error =
-          action.error.message || "Failed to create conversation";
-      })
       // 3.SELECT A CONVERSATION
       .addCase(selectConversation, (state, action) => {
         state.selectedConversation = action.payload;
@@ -109,4 +92,5 @@ const conversationsSlice = createSlice({
 });
 
 export default conversationsSlice.reducer;
-export const { setRecievedMessage } = conversationsSlice.actions;
+export const { setRecievedMessage, setRecievedConversation } =
+  conversationsSlice.actions;

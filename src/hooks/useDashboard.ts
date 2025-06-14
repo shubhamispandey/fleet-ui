@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from "@redux/store";
 import config from "@lib/config";
 import makeApiCall from "@lib/makeApi";
 import actions from "@redux/actions";
+import SOCKET_EVENTS from "@lib/socketEvents";
 import {
   Conversation,
   CreateConversationPayload,
@@ -23,6 +24,7 @@ const useDashboard = () => {
     selectedConversation,
     messages,
   } = useSelector((state: RootState) => state.conversations);
+  const socket = useSelector((state: RootState) => state.socket.socket);
 
   // ID of the currently selected conversation
   const conversationId = selectedConversation?.data?._id;
@@ -118,25 +120,34 @@ const useDashboard = () => {
     [dispatch]
   );
 
-  // HANDLE: Create a new conversation (group/private)
-  const handleCreateConversation = useCallback(
-    ({ participantId, type, name }: CreateConversationPayload) => {
+  const handleGetConversation = useCallback(
+    ({ conversationId, search = "" }) => {
+      if (!conversationId) return;
       try {
         dispatch(
-          actions.conversations.createConversationThunk({
-            payload: {
-              participantId,
-              type,
-              name,
-            },
+          actions.conversations.getConversationThunk({
+            conversationId,
+            search,
           })
         );
       } catch (error) {
-        console.error("Error creating conversation:", error);
+        console.error("Error fetching conversations:", error);
         // Handle error appropriately, e.g., show a notification
       }
     },
     [dispatch]
+  );
+
+  const handleCreateConversation = useCallback(
+    ({ participantId, type, name }: CreateConversationPayload) => {
+      if (!socket) return;
+      socket.emit(SOCKET_EVENTS.CREATE_CONVERSATION, {
+        participantId,
+        type,
+        name,
+      });
+    },
+    [socket]
   );
 
   // HANDLE: Select an existing conversation
@@ -163,9 +174,7 @@ const useDashboard = () => {
     );
     if (conversation) {
       handleSelectConversation({ conversation });
-      console.log("Selected conversation:", conversation);
     } else {
-      console.warn("No conversation found for user:", user._id);
       handleCreateConversation({
         participantId: user._id,
         type: "private",
@@ -193,6 +202,7 @@ const useDashboard = () => {
     // FUNCTIONS
     handleSearchNavbar,
     handleGetConversations,
+    handleGetConversation,
     handleCreateConversation,
     handleSelectUser,
     handleSelectConversation,
