@@ -11,8 +11,11 @@ interface ConversationItemProps {
 const ConversationListItem: React.FC<ConversationItemProps> = ({
   conversation,
 }) => {
-  const { selectedConversation, currentUser, handleSelectConversation } =
-    useDashboard();
+  const {
+    selectedConversation,
+    currentUser,
+    handleSelectConversation,
+  } = useDashboard();
   const isActive = selectedConversation.data?._id === conversation._id;
 
   // Local logic separated from JSX
@@ -36,6 +39,7 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
         addSuffix: true,
       })
     : "";
+  const isTyping = Object.keys(conversation.typing ?? {}).length > 0;
 
   // const unreadCount = currentUser?._id
   //   ? conversation.lastMessage?.readBy?.includes(currentUser?._id)
@@ -72,6 +76,7 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
             >
               {displayName}
             </h2>
+
             <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
               {lastMessageTime}
             </span>
@@ -86,6 +91,22 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
                 {unreadCount}
               </span>
             )} */}
+            {isTyping && (
+              <div className="flex items-center gap-1 ml-2">
+                <span
+                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                  style={{ animationDelay: "0ms" }}
+                ></span>
+                <span
+                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                  style={{ animationDelay: "200ms" }}
+                ></span>
+                <span
+                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                  style={{ animationDelay: "400ms" }}
+                ></span>
+              </div>
+            )}
           </div>
         </div>
       </div>

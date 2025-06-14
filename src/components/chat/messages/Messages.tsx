@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Message from "./MessageItem";
 import useDashboard from "@hooks/useDashboard";
+import TypingIndicator from "./TypingIndicator";
 
 const LoadingSkeleton = () => (
   <div className="p-2 h-full flex flex-col items-center justify-center">
@@ -54,30 +55,24 @@ const MessagesList = () => {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
   }, [allMessages]);
 
+  // Auto-scroll when typing indicators change
+  useEffect(() => {
+    if (containerRef.current) {
+      const scrollToBottom = () => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+      };
+
+      // Small delay to ensure DOM has updated
+      const timeoutId = setTimeout(scrollToBottom, 50);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [selectedConversation?.data?.typing]);
+
   useEffect(handleGetMessages, [handleGetMessages]);
 
   const renderMessages = () => (
-    <AnimatePresence>
-      {allMessages.map((message) => (
-        <motion.div
-          key={message._id}
-          layout
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.2 }}
-        >
-          <Message
-            message={message}
-            isGroupChat={selectedConversation?.data?.type === "group"}
-            currentUserId={currentUserId ?? ""}
-          />
-        </motion.div>
-      ))}
-    </AnimatePresence>
-  );
-
-  return (
     <div className="flex-1 overflow-hidden">
       <div
         ref={containerRef}
@@ -88,11 +83,46 @@ const MessagesList = () => {
         ) : !allMessages.length ? (
           <EmptyState />
         ) : (
-          renderMessages()
+          <>
+            {/* Conversation name/message at the top */}
+            {selectedConversation?.data?.name && (
+              <div className="flex justify-center mb-4">
+                <span className="bg-indigo-50 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium shadow-sm">
+                  {selectedConversation.data.name}
+                </span>
+              </div>
+            )}
+            <AnimatePresence>
+              {allMessages.map((message) => (
+                <motion.div
+                  key={message._id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Message
+                    message={message}
+                    isGroupChat={selectedConversation?.data?.type === "group"}
+                    currentUserId={currentUserId ?? ""}
+                  />
+                </motion.div>
+              ))}
+              {/* Typing indicator below messages */}
+              <TypingIndicator
+                typing={selectedConversation?.data?.typing}
+                participants={selectedConversation?.data?.participants}
+                currentUserId={currentUserId}
+              />
+            </AnimatePresence>
+          </>
         )}
       </div>
     </div>
   );
+
+  return renderMessages();
 };
 
 export default MessagesList;

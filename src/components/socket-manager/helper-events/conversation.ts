@@ -4,6 +4,7 @@ import SOCKET_EVENTS from "@lib/socketEvents";
 import {
   setRecievedMessage,
   setRecievedConversation,
+  setTypingIndicator,
 } from "@redux/slices/conversationsSlice";
 
 type ConversationEventsDeps = {
@@ -20,6 +21,12 @@ const registerConversationEvents = (
   socket.on(SOCKET_EVENTS.RECEIVE_CONVERSATION, (conversation) => {
     dispatch(setRecievedConversation(conversation.data));
   });
+  socket.on(
+    SOCKET_EVENTS.TYPING_INDICATOR,
+    ({ conversationId, userId, isTyping }) => {
+      dispatch(setTypingIndicator({ conversationId, userId, isTyping }));
+    }
+  );
 };
 
 export default registerConversationEvents;

@@ -11,6 +11,7 @@ export interface Conversation {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  typing?: Record<string, boolean>;
 }
 
 export interface AllConversationState {

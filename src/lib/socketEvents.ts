@@ -18,8 +18,8 @@ const SOCKET_EVENTS = {
   SEND_GROUP_MESSAGE: "send-group-message", // Client sends a message to a group conversation
   RECEIVE_MESSAGE: "receive-message", // Server broadcasts a new message to relevant clients
   CREATE_CONVERSATION: "create-conversation", // Client sends conversation that is created to another client
-  RECEIVE_CONVERSATION: "receive-conversation",
-  TYPING_INDICATOR: "typing-indicator", // Server broadcasts typing status
+  RECEIVE_CONVERSATION: "receive-conversation", // Server sends a conversation to a client
+  TYPING_INDICATOR: "typing-indicator", // Client/Server broadcasts typing status
   CHAT_ERROR: "chat-error", // Server sends an error related to chat operations
 
   GET_CHAT_HISTORY: "get-chat-history", // Client requests chat history for a conversation

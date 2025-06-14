@@ -1,6 +1,10 @@
 import { Dispatch, UnknownAction } from "redux";
 import { Socket } from "socket.io-client";
 import { setStatus } from "@redux/slices/usersSlice";
+import {
+  setUserOnlineStatus,
+  clearTypingIndicators,
+} from "@redux/slices/conversationsSlice";
 import SOCKET_EVENTS from "@lib/socketEvents";
 
 /**
@@ -26,12 +30,16 @@ const registerConnectionEvents = (
 
   // --- Global Socket Event Listeners (for presence) ---
   socket.on(SOCKET_EVENTS.USER_ONLINE, ({ userId, status }) => {
-    // This will be handled in Dashboard.tsx for allUsers list
+    // Update user status in conversations
+    dispatch(setUserOnlineStatus({ userId, status }));
     console.log(`User ${userId} is now ${status}`);
   });
 
   socket.on(SOCKET_EVENTS.USER_OFFLINE, ({ userId, status }) => {
-    // This will be handled in Dashboard.tsx for allUsers list
+    // Update user status in conversations
+    dispatch(setUserOnlineStatus({ userId, status }));
+    // Clear typing indicators for offline user
+    dispatch(clearTypingIndicators({ userId }));
     console.log(`User ${userId} is now ${status}`);
   });
 

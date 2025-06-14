@@ -92,13 +92,15 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <pre>{session.data}</pre>
           <div className="flex items-center">
             {/* User Name */}
             {user?.name && (
               <div className="text-sm font-semibold text-white me-2">
                 Welcome{" "}
-                <span className="text-pink-600 underline underline-offset-2">{user?.name}</span> !
+                <span className="text-pink-600 underline underline-offset-2">
+                  {user?.name}
+                </span>{" "}
+                !
               </div>
             )}
             {/* Notifications */}

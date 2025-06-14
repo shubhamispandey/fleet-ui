@@ -24,7 +24,7 @@ const Message: React.FC<MessageProps> = ({
           <Image
             className="w-5 h-5 rounded-full border border-indigo-100 shadow-sm"
             alt="User Avatar"
-            src={message.senderId.avatar || "/img/avatars/default.webp"}
+            src={message.senderId.avatar || "/img/avatars/user.webp"}
             width={20}
             height={20}
           />

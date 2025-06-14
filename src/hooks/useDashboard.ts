@@ -120,24 +120,6 @@ const useDashboard = () => {
     [dispatch]
   );
 
-  const handleGetConversation = useCallback(
-    ({ conversationId, search = "" }) => {
-      if (!conversationId) return;
-      try {
-        dispatch(
-          actions.conversations.getConversationThunk({
-            conversationId,
-            search,
-          })
-        );
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-        // Handle error appropriately, e.g., show a notification
-      }
-    },
-    [dispatch]
-  );
-
   const handleCreateConversation = useCallback(
     ({ participantId, type, name }: CreateConversationPayload) => {
       if (!socket) return;
@@ -198,15 +180,26 @@ const useDashboard = () => {
     }
   }, [conversationId, selectedConversationMessages.length, dispatch]);
 
+  const handleNotifyTyping = useCallback(
+    (isTyping: boolean) => {
+      if (!socket) return;
+      socket.emit(SOCKET_EVENTS.TYPING_INDICATOR, {
+        conversationId,
+        isTyping,
+      });
+    },
+    [socket, conversationId]
+  );
+
   return {
     // FUNCTIONS
     handleSearchNavbar,
     handleGetConversations,
-    handleGetConversation,
     handleCreateConversation,
     handleSelectUser,
     handleSelectConversation,
     handleGetMessages,
+    handleNotifyTyping,
 
     // UTILS
     conversationId,

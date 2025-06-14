@@ -9,7 +9,7 @@ import { setSocket } from "@redux/slices/socketSlice";
 import registerConnectionEvents from "./helper-events/connection";
 import registerMessageEvents from "./helper-events/conversation";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL; // Make sure this matches your backend
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL;
 
 const SocketManager = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ const SocketManager = () => {
 
   useEffect(() => {
     if (currentUser?._id && !socketRef.current) {
-      console.log("Attempting Socket.IO connection to:", SOCKET_URL);
       const newSocket = io(SOCKET_URL, {
         withCredentials: true, // Crucial for sending HTTP-only cookies
         transports: ["websocket"], // Use WebSocket transport

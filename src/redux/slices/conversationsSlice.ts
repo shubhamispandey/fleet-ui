@@ -47,6 +47,101 @@ const conversationsSlice = createSlice({
     setRecievedConversation: (state, action) => {
       state.allConversations.data.conversations.unshift(action.payload);
     },
+    setTypingIndicator: (state, action) => {
+      const { conversationId, userId, isTyping } = action.payload;
+
+      // Helper function to update typing state
+      const updateTypingState = (conversation: {
+        typing?: Record<string, boolean>;
+      }) => {
+        if (!conversation.typing) {
+          conversation.typing = {};
+        }
+        if (isTyping) {
+          conversation.typing[userId] = true;
+        } else {
+          delete conversation.typing[userId];
+          // Clean up empty typing object
+          if (Object.keys(conversation.typing).length === 0) {
+            delete conversation.typing;
+          }
+        }
+      };
+
+      // Update all conversations
+      state.allConversations.data.conversations.forEach((conversation) => {
+        if (conversation._id === conversationId) {
+          updateTypingState(conversation);
+        }
+      });
+
+      // Update selected conversation
+      if (
+        state.selectedConversation.data &&
+        state.selectedConversation.data._id === conversationId
+      ) {
+        updateTypingState(state.selectedConversation.data);
+      }
+    },
+    clearTypingIndicators: (state, action) => {
+      const { userId } = action.payload;
+
+      // Clear typing for specific user across all conversations
+      state.allConversations.data.conversations.forEach((conversation) => {
+        if (conversation.typing && conversation.typing[userId]) {
+          delete conversation.typing[userId];
+          if (Object.keys(conversation.typing).length === 0) {
+            delete conversation.typing;
+          }
+        }
+      });
+
+      // Clear from selected conversation
+      if (state.selectedConversation.data?.typing?.[userId]) {
+        delete state.selectedConversation.data.typing[userId];
+        if (Object.keys(state.selectedConversation.data.typing).length === 0) {
+          delete state.selectedConversation.data.typing;
+        }
+      }
+    },
+    clearAllTypingIndicators: (state, action) => {
+      const { conversationId } = action.payload;
+
+      // Clear all typing indicators for a specific conversation
+      state.allConversations.data.conversations.forEach((conversation) => {
+        if (conversation._id === conversationId) {
+          delete conversation.typing;
+        }
+      });
+
+      if (
+        state.selectedConversation.data &&
+        state.selectedConversation.data._id === conversationId
+      ) {
+        delete state.selectedConversation.data.typing;
+      }
+    },
+    setUserOnlineStatus: (state, action) => {
+      const { userId, status } = action.payload;
+
+      // Update user status in all conversations
+      state.allConversations.data.conversations.forEach((conversation) => {
+        conversation.participants.forEach((participant) => {
+          if (participant._id === userId) {
+            participant.status = status;
+          }
+        });
+      });
+
+      // Update user status in selected conversation if it exists
+      if (state.selectedConversation.data) {
+        state.selectedConversation.data.participants.forEach((participant) => {
+          if (participant._id === userId) {
+            participant.status = status;
+          }
+        });
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -92,5 +187,11 @@ const conversationsSlice = createSlice({
 });
 
 export default conversationsSlice.reducer;
-export const { setRecievedMessage, setRecievedConversation } =
-  conversationsSlice.actions;
+export const {
+  setRecievedMessage,
+  setRecievedConversation,
+  setUserOnlineStatus,
+  setTypingIndicator,
+  clearTypingIndicators,
+  clearAllTypingIndicators,
+} = conversationsSlice.actions;
