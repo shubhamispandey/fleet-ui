@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@redux/store";
 import config from "@lib/config";
 import makeApiCall from "@lib/makeApi";
-import actions from "@redux/actions";
+import {
+  getConversationsThunk,
+  getMessagesThunk,
+  selectConversation,
+} from "@redux/slices/conversationsSlice";
 import SOCKET_EVENTS from "@lib/socketEvents";
 import {
   Conversation,
@@ -62,13 +66,19 @@ const useDashboard = () => {
   const currentUser = useSelector((state: RootState) => state.users.user.data);
 
   // Other users in the current conversation (excludes current user)
-  const recipientUsers =
-    selectedConversation.data?.participants.filter(
-      (p) => p._id !== currentUser?._id
-    ) ?? [];
+  const recipientUsers = useMemo(
+    () =>
+      selectedConversation.data?.participants.filter(
+        (p) => p._id !== currentUser?._id
+      ) ?? [],
+    [selectedConversation.data?.participants, currentUser?._id]
+  );
 
   // Single recipient user (used in private chat context)
-  const recipient = !!recipientUsers?.length ? recipientUsers?.[0] : null;
+  const recipient = useMemo(
+    () => (!!recipientUsers?.length ? recipientUsers?.[0] : null),
+    [recipientUsers]
+  );
 
   // HANDLE: Search users or chats from navbar
   const handleSearchNavbar = useCallback(
@@ -106,16 +116,11 @@ const useDashboard = () => {
   // HANDLE: Fetch all conversations for the current user
   const handleGetConversations = useCallback(
     ({ search = "" }) => {
-      try {
-        dispatch(
-          actions.conversations.getConversationsThunk({
-            search,
-          })
-        );
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-        // Handle error appropriately, e.g., show a notification
-      }
+      dispatch(
+        getConversationsThunk({
+          search,
+        })
+      );
     },
     [dispatch]
   );
@@ -139,7 +144,7 @@ const useDashboard = () => {
     conversation: Conversation | null;
   }) => {
     dispatch(
-      actions.conversations.selectConversation({
+      selectConversation({
         loading: false,
         data: conversation,
         error: null,
@@ -167,17 +172,12 @@ const useDashboard = () => {
 
   // HANDLE: Fetch messages for the selected conversation
   const handleGetMessages: HandleGetMessages = useCallback(() => {
-    try {
-      if (!conversationId || selectedConversationMessages.length) return;
-      dispatch(
-        actions.conversations.getMessagesThunk({
-          conversationId,
-        })
-      );
-    } catch (error) {
-      console.error("Error fetching conversations:", error);
-      // Handle error appropriately, e.g., show a notification
-    }
+    if (!conversationId || selectedConversationMessages.length) return;
+    dispatch(
+      getMessagesThunk({
+        conversationId,
+      })
+    );
   }, [conversationId, selectedConversationMessages.length, dispatch]);
 
   const handleNotifyTyping = useCallback(

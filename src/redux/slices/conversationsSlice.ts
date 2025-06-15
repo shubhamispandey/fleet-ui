@@ -1,10 +1,65 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import makeApiCall from "@lib/makeApi";
+import config from "@lib/config";
 import {
-  getConversationsThunk,
-  getMessagesThunk,
-  selectConversation,
-} from "../actions/conversations";
-import { ConversationsState } from "../../types/";
+  ApiResponse,
+  Conversation,
+  ConversationsState,
+  GetConversationsParams,
+  GetMessagesParams,
+  MessageResponseData,
+  SelectedConversationState,
+} from "../../types";
+
+const conversationsEndPoints = config.apiEndPoints.conversations;
+
+// THUNKS
+export const getConversationsThunk = createAsyncThunk(
+  "conversations/getConversations",
+  async (
+    { page = 1, limit = -1, search = "" }: GetConversationsParams,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response: ApiResponse<Conversation[]> = await makeApiCall({
+        url: conversationsEndPoints.baseUrl,
+        method: "GET",
+        params: { page, limit, search },
+      });
+      return response.data as Conversation[];
+    } catch {
+      // Notifications should be handled in the component that dispatches this thunk.
+      return rejectWithValue("An error occurred while fetching conversations.");
+    }
+  }
+);
+
+export const getMessagesThunk = createAsyncThunk(
+  "conversations/getMessages",
+  async (
+    {
+      page = 1,
+      limit = -1,
+      search = "",
+      conversationId,
+    }: GetMessagesParams & { conversationId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response: ApiResponse<MessageResponseData> = await makeApiCall({
+        url: `${
+          conversationsEndPoints.baseUrl
+        }${conversationsEndPoints.getMessages(conversationId)}`,
+        method: "GET",
+        params: { page, limit, search },
+      });
+      return { conversationId, messages: response.data.messages };
+    } catch {
+      // Notifications should be handled in the component that dispatches this thunk.
+      return rejectWithValue("An error occurred while fetching messages.");
+    }
+  }
+);
 
 const initialState: ConversationsState = {
   allConversations: {
@@ -32,6 +87,12 @@ const conversationsSlice = createSlice({
   initialState,
   name: "conversations",
   reducers: {
+    selectConversation: (
+      state,
+      action: PayloadAction<SelectedConversationState>
+    ) => {
+      state.selectedConversation = action.payload;
+    },
     setRecievedMessage: (state, action) => {
       const { conversationId, message } = action.payload;
       if (state.messages.data.messages[conversationId])
@@ -161,14 +222,12 @@ const conversationsSlice = createSlice({
           };
         }
       })
-      .addCase(getConversationsThunk.rejected, (state) => {
+      .addCase(getConversationsThunk.rejected, (state, action) => {
         state.allConversations.loading = false;
+        state.allConversations.error = action.payload as string;
       })
 
-      // 3.SELECT A CONVERSATION
-      .addCase(selectConversation, (state, action) => {
-        state.selectedConversation = action.payload;
-      })
+      // 3.SELECT A CONVERSATION - is now a reducer
       // 4.GET MESSAGES
       .addCase(getMessagesThunk.pending, (state) => {
         state.messages.loading = true;
@@ -179,15 +238,16 @@ const conversationsSlice = createSlice({
           action.payload.messages;
         state.messages.error = null;
       })
-      .addCase(getMessagesThunk.rejected, (state) => {
+      .addCase(getMessagesThunk.rejected, (state, action) => {
         state.messages.loading = false;
-        state.messages.error = "Error Fetching your messages!";
+        state.messages.error = action.payload as string;
       });
   },
 });
 
 export default conversationsSlice.reducer;
 export const {
+  selectConversation,
   setRecievedMessage,
   setRecievedConversation,
   setUserOnlineStatus,

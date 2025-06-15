@@ -1,17 +1,23 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import actions from "@redux/actions";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { getCurrentUserThunk } from "@redux/slices/usersSlice";
 import { AppDispatch } from "@redux/store";
 
 const useUser = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const getCurrentUser = useCallback(
-    (redirect: (path: string) => void): void => {
-      dispatch(actions.users.getCurrentUserThunk(redirect));
-    },
-    [dispatch]
-  );
+  const getCurrentUser = useCallback(async () => {
+    try {
+      const resultAction = await dispatch(getCurrentUserThunk());
+      return unwrapResult(resultAction);
+    } catch (error) {
+      // The component that calls this will be responsible for redirection.
+      console.error("Failed to fetch user:", error);
+      // Re-throw the error to allow the calling component to handle it
+      throw error;
+    }
+  }, [dispatch]);
 
   return { getCurrentUser };
 };

@@ -3,6 +3,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import tokenManager from "./tokenManager";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
@@ -10,7 +11,7 @@ const api = axios.create({
 });
 
 const setAuthorizationHeaders = (): Record<string, string> => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = tokenManager.getToken();
   const userId = localStorage.getItem("userId");
   const headers: Record<string, string> = {};
   if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
@@ -72,7 +73,8 @@ const makeApiCall = async <T>({
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response?.data?.status === 0) {
-      localStorage.clear();
+      tokenManager.clearToken();
+      localStorage.removeItem("userId");
       window.location.href = "/login";
     }
     throw error;

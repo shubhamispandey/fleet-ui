@@ -1,7 +1,29 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentUserThunk } from "@redux/actions/users";
-import { UsersState, UserType } from "../../types";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import makeApiCall from "@lib/makeApi";
+import config from "@lib/config";
+import { UsersState, UserType, ApiResponse, ApiError } from "../../types";
+
+const usersEndPoints = config.apiEndPoints.users;
+
+// THUNK
+export const getCurrentUserThunk = createAsyncThunk(
+  "users/getCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response: ApiResponse<UserType> = await makeApiCall({
+        url: `${usersEndPoints.baseUrl}${usersEndPoints.getCurrentUser}`,
+        method: "GET",
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        (error as ApiError)?.response?.data?.message ||
+          "Failed to get user details."
+      );
+    }
+  }
+);
 
 const usersSlice = createSlice({
   initialState: {
@@ -24,16 +46,16 @@ const usersSlice = createSlice({
       // getCurrentUserThunk
       .addCase(getCurrentUserThunk.pending, (state) => {
         state.user.loading = true;
+        state.user.error = null;
       })
       .addCase(getCurrentUserThunk.fulfilled, (state, action) => {
         state.user.loading = false;
-        state.user.data = action.payload.data as UserType | null;
-        state.user.error = null;
+        state.user.data = action.payload as UserType | null;
       })
-      .addCase(getCurrentUserThunk.rejected, (state) => {
+      .addCase(getCurrentUserThunk.rejected, (state, action) => {
         state.user.loading = false;
         state.user.data = null;
-        state.user.error = "Failed to fetch user data.";
+        state.user.error = action.payload as string;
       });
   },
 });
