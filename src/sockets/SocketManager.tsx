@@ -30,7 +30,10 @@ const SocketManager = () => {
       socketRef.current = newSocket;
       dispatch(setSocket(newSocket));
       registerConnectionEvents(newSocket, { dispatch });
-      registerConversationEvents(newSocket, { dispatch });
+      registerConversationEvents(newSocket, {
+        dispatch,
+        currentUserId: currentUser._id,
+      });
 
       return () => {
         newSocket.disconnect();

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { Conversation } from "../../../types";
 import useDashboard from "@hooks/useDashboard";
+import { Check, CheckCheck, Eye } from "lucide-react";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -41,11 +42,60 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
     : "";
   const isTyping = Object.keys(conversation.typing ?? {}).length > 0;
 
-  // const unreadCount = currentUser?._id
-  //   ? conversation.lastMessage?.readBy?.includes(currentUser?._id)
-  //     ? 0
-  //     : 1
-  //   : 0;
+  // Unread count logic
+  const unreadCount = conversation.unreadCount || 0;
+  const hasUnreadMessages = unreadCount > 0;
+
+  // Read status logic for last message
+  const isLastMessageFromSelf =
+    conversation.lastMessage?.senderId._id === currentUser?._id;
+  const participantIds = participants.map((p) => p._id);
+  const lastMessageReadBy = conversation.lastMessage?.readBy || [];
+  const participantsWhoRead = lastMessageReadBy.filter(
+    (id) => id !== currentUser?._id
+  );
+  const readCount = participantsWhoRead.length;
+  const totalOtherParticipants = participantIds.length;
+
+  const renderReadStatus = () => {
+    if (!isLastMessageFromSelf || !conversation.lastMessage) return null;
+
+    if (conversation.type === "private") {
+      const otherParticipant = participantIds[0];
+      const isRead = participantsWhoRead.includes(otherParticipant);
+
+      return (
+        <div className="flex items-center gap-1 ml-2">
+          {isRead ? (
+            <Eye className="w-3 h-3 text-blue-500" />
+          ) : (
+            <CheckCheck className="w-3 h-3 text-gray-400" />
+          )}
+        </div>
+      );
+    }
+
+    // Group chat
+    if (readCount === 0) {
+      return (
+        <div className="flex items-center gap-1 ml-2">
+          <Check className="w-3 h-3 text-gray-400" />
+        </div>
+      );
+    } else if (readCount < totalOtherParticipants) {
+      return (
+        <div className="flex items-center gap-1 ml-2">
+          <CheckCheck className="w-3 h-3 text-gray-400" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center gap-1 ml-2">
+          <Eye className="w-3 h-3 text-blue-500" />
+        </div>
+      );
+    }
+  };
 
   return (
     <li
@@ -82,31 +132,38 @@ const ConversationListItem: React.FC<ConversationItemProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500 truncate">
-              {!!lastMessageContent &&
-                `${lastMessageSenderName} : ${lastMessageContent}`}
-            </p>
-            {/* {unreadCount > 0 && (
-              <span className="ml-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {unreadCount}
-              </span>
-            )} */}
-            {isTyping && (
-              <div className="flex items-center gap-1 ml-2">
-                <span
-                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                ></span>
-                <span
-                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
-                  style={{ animationDelay: "200ms" }}
-                ></span>
-                <span
-                  className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
-                  style={{ animationDelay: "400ms" }}
-                ></span>
-              </div>
-            )}
+            <div className="flex items-center flex-1 min-w-0">
+              <p className="text-sm text-gray-500 truncate">
+                {!!lastMessageContent &&
+                  `${lastMessageSenderName} : ${lastMessageContent}`}
+              </p>
+              {renderReadStatus()}
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Unread count badge */}
+              {hasUnreadMessages && (
+                <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+              {/* Typing indicator */}
+              {isTyping && (
+                <div className="flex items-center gap-1">
+                  <span
+                    className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  ></span>
+                  <span
+                    className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "200ms" }}
+                  ></span>
+                  <span
+                    className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "400ms" }}
+                  ></span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

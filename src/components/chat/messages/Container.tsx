@@ -1,13 +1,77 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Header from "./Header";
 import Messages from "./Messages";
 import InputArea from "./InputArea";
 import useDashboard from "@hooks/useDashboard";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@redux/store";
+import SOCKET_EVENTS from "@lib/socketEvents";
+import { clearUnreadCount } from "@redux/slices/conversationsSlice";
 
 const Container = () => {
   const { selectedConversation, handleSelectConversation } = useDashboard();
+  const socket = useSelector((state: RootState) => state.socket.socket);
+  const dispatch = useDispatch();
   const showBackButton = !!selectedConversation.data;
   const onBack = () => handleSelectConversation({ conversation: null });
+  const lastMarkedMessageId = useRef<string | null>(null);
+
+  // Mark conversation as read when it's selected or when new messages arrive
+  useEffect(() => {
+    if (selectedConversation.data && socket) {
+      const conversationId = selectedConversation.data._id;
+      const lastMessage = selectedConversation.data.lastMessage;
+
+      if (
+        conversationId &&
+        lastMessage &&
+        lastMessage._id !== lastMarkedMessageId.current
+      ) {
+        lastMarkedMessageId.current = lastMessage._id;
+        socket.emit(SOCKET_EVENTS.MARK_CONVERSATION_AS_READ, {
+          conversationId,
+          lastMessageId: lastMessage._id,
+        });
+
+        // Clear unread count when conversation is viewed
+        dispatch(clearUnreadCount({ conversationId }));
+      }
+    }
+  }, [
+    selectedConversation?.data?._id,
+    selectedConversation?.data?.lastMessage?._id,
+    socket,
+    dispatch,
+    selectedConversation?.data,
+  ]);
+
+  // Mark as read when conversation is first loaded
+  useEffect(() => {
+    if (selectedConversation.data && socket) {
+      const conversationId = selectedConversation.data._id;
+      const lastMessage = selectedConversation.data.lastMessage;
+
+      if (conversationId && lastMessage) {
+        // Small delay to ensure the conversation is fully loaded
+        const timeoutId = setTimeout(() => {
+          socket.emit(SOCKET_EVENTS.MARK_CONVERSATION_AS_READ, {
+            conversationId,
+            lastMessageId: lastMessage._id,
+          });
+
+          // Clear unread count when conversation is loaded
+          dispatch(clearUnreadCount({ conversationId }));
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [
+    selectedConversation?.data?._id,
+    socket,
+    dispatch,
+    selectedConversation?.data,
+  ]);
 
   if (!selectedConversation.data) return null;
 

@@ -92,18 +92,49 @@ const conversationsSlice = createSlice({
       action: PayloadAction<SelectedConversationState>
     ) => {
       state.selectedConversation = action.payload;
+
+      // Clear unread count for the selected conversation
+      if (action.payload.data) {
+        const conversationIndex = state.allConversations.data.conversations.findIndex(
+          (conv) => conv._id === action.payload.data!._id
+        );
+        if (conversationIndex !== -1) {
+          state.allConversations.data.conversations[
+            conversationIndex
+          ].unreadCount = 0;
+        }
+      }
     },
     setRecievedMessage: (state, action) => {
-      const { conversationId, message } = action.payload;
+      const { conversationId, message, currentUserId } = action.payload;
       if (state.messages.data.messages[conversationId])
         state.messages.data.messages[conversationId].push(message);
 
       const index = state.allConversations.data.conversations.findIndex(
         (conv) => conv._id === conversationId
       );
-      state.allConversations.data.conversations[index].lastMessage = message;
-      if (state.selectedConversation.data)
+
+      if (index !== -1) {
+        const conversation = state.allConversations.data.conversations[index];
+        conversation.lastMessage = message;
+
+        // Increment unread count if conversation is not currently selected
+        // and the message is not from the current user
+        const isCurrentlySelected =
+          state.selectedConversation.data?._id === conversationId;
+        const isMessageFromSelf = message.senderId._id === currentUserId;
+
+        if (!isCurrentlySelected && !isMessageFromSelf) {
+          conversation.unreadCount = (conversation.unreadCount || 0) + 1;
+        }
+      }
+
+      if (
+        state.selectedConversation.data &&
+        state.selectedConversation.data._id === conversationId
+      ) {
         state.selectedConversation.data.lastMessage = message;
+      }
     },
     setRecievedConversation: (state, action) => {
       state.allConversations.data.conversations.unshift(action.payload);
@@ -203,6 +234,75 @@ const conversationsSlice = createSlice({
         });
       }
     },
+    updateMessageReadStatus: (state, action) => {
+      const { conversationId, userId } = action.payload;
+
+      // Update read status for messages in the conversation
+      if (state.messages.data.messages[conversationId]) {
+        state.messages.data.messages[conversationId].forEach((message) => {
+          // Add user to readBy array if not already present
+          if (
+            message.senderId._id !== userId &&
+            !message.readBy.includes(userId)
+          ) {
+            message.readBy.push(userId);
+          }
+        });
+      }
+
+      // Update last message read status in conversations list
+      const conversationIndex = state.allConversations.data.conversations.findIndex(
+        (conv) => conv._id === conversationId
+      );
+      if (conversationIndex !== -1) {
+        const lastMessage =
+          state.allConversations.data.conversations[conversationIndex]
+            .lastMessage;
+        if (
+          lastMessage &&
+          lastMessage.senderId._id !== userId &&
+          !lastMessage.readBy.includes(userId)
+        ) {
+          lastMessage.readBy.push(userId);
+        }
+      }
+
+      // Update last message read status in selected conversation
+      if (
+        state.selectedConversation.data &&
+        state.selectedConversation.data._id === conversationId
+      ) {
+        const lastMessage = state.selectedConversation.data.lastMessage;
+        if (
+          lastMessage &&
+          lastMessage.senderId._id !== userId &&
+          !lastMessage.readBy.includes(userId)
+        ) {
+          lastMessage.readBy.push(userId);
+        }
+      }
+    },
+    clearUnreadCount: (state, action) => {
+      const { conversationId } = action.payload;
+
+      // Clear unread count for specific conversation
+      const conversationIndex = state.allConversations.data.conversations.findIndex(
+        (conv) => conv._id === conversationId
+      );
+      if (conversationIndex !== -1) {
+        state.allConversations.data.conversations[
+          conversationIndex
+        ].unreadCount = 0;
+      }
+
+      // Also clear from selected conversation if it matches
+      if (
+        state.selectedConversation.data &&
+        state.selectedConversation.data._id === conversationId
+      ) {
+        state.selectedConversation.data.unreadCount = 0;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -254,4 +354,6 @@ export const {
   setTypingIndicator,
   clearTypingIndicators,
   clearAllTypingIndicators,
+  updateMessageReadStatus,
+  clearUnreadCount,
 } = conversationsSlice.actions;
