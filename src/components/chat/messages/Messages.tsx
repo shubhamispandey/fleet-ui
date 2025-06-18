@@ -50,6 +50,13 @@ const MessagesList = () => {
   const currentUserId = currentUser?._id;
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Extract participant IDs for read status
+  const participants =
+    selectedConversation?.data?.participants?.map((p) => p._id) || [];
+
+  // Get participant data for context menu
+  const participantData = selectedConversation?.data?.participants || [];
+
   useEffect(() => {
     if (containerRef.current)
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -106,6 +113,8 @@ const MessagesList = () => {
                     message={message}
                     isGroupChat={selectedConversation?.data?.type === "group"}
                     currentUserId={currentUserId ?? ""}
+                    participants={participants}
+                    participantData={participantData}
                   />
                 </motion.div>
               ))}

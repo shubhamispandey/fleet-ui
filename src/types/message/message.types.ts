@@ -12,6 +12,7 @@ export interface Conversation {
   updatedAt: string;
   __v: number;
   typing?: Record<string, boolean>;
+  unreadCount?: number;
 }
 
 export interface AllConversationState {

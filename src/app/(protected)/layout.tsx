@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@components/auth/useAuth";
 import Loader from "@components/page-loader/Loader";
-import SocketManager from "@components/socket-manager/SocketManager";
+import SocketManager from "@sockets/SocketManager";
 import useUser from "@hooks/useUser";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -13,8 +13,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const { getCurrentUser } = useUser();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) getCurrentUser(router.push);
-  }, [isLoading, isAuthenticated, getCurrentUser, router.push]);
+    const fetchUser = async () => {
+      try {
+        await getCurrentUser();
+      } catch {
+        // Redirect to login if fetching user fails
+        router.push("/login");
+      }
+    };
+
+    if (!isLoading && isAuthenticated) {
+      fetchUser();
+    }
+  }, [isLoading, isAuthenticated, getCurrentUser, router]);
 
   if (isLoading) {
     return (

@@ -27,6 +27,16 @@ const SOCKET_EVENTS = {
   GET_USER_CONVERSATIONS: "get-user-conversations", // Client requests list of all conversations for the user
   USER_CONVERSATIONS: "user-conversations", // Server sends list of user's conversations
 
+  // --- Message Read Status ---
+  MARK_CONVERSATION_AS_READ: "mark-conversation-as-read", // Client requests to mark messages in a conversation as read
+  MESSAGE_READ: "message-read", // Server broadcasts message read status
+
+  // --- Message Management ---
+  DELETE_MESSAGE: "delete-message", // Client requests to delete a message
+  MESSAGE_DELETED: "message-deleted", // Server broadcasts message deletion
+  UPDATE_MESSAGE: "update-message", // Client requests to update a message
+  MESSAGE_UPDATED: "message-updated", // Server broadcasts message update
+
   // --- Meeting Management & Signaling (Anticipated for future weeks) ---
   CREATE_ROOM: "create-room", // Client requests to create a new meeting room
   ROOM_CREATED: "room-created", // Server confirms room creation with room ID

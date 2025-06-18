@@ -2,43 +2,45 @@
 "use client"; // If using Next.js App Router and this is a client component
 
 import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../redux/store";
 import { setSocket } from "@redux/slices/socketSlice";
 import registerConnectionEvents from "./helper-events/connection";
-import registerMessageEvents from "./helper-events/conversation";
+import registerConversationEvents from "./helper-events/conversation";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL;
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL || "";
 
 const SocketManager = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.users.user.data);
-  const socketRef = useRef<ReturnType<typeof io> | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
     if (currentUser?._id && !socketRef.current) {
+      const accessToken = localStorage.getItem("accessToken");
       const newSocket = io(SOCKET_URL, {
-        withCredentials: true, // Crucial for sending HTTP-only cookies
-        transports: ["websocket"], // Use WebSocket transport
+        withCredentials: true,
+        transports: ["websocket"],
         extraHeaders: {
-          Cookie: `accessToken=${localStorage}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
       socketRef.current = newSocket;
       dispatch(setSocket(newSocket));
       registerConnectionEvents(newSocket, { dispatch });
-      registerMessageEvents(newSocket, { dispatch });
+      registerConversationEvents(newSocket, {
+        dispatch,
+        currentUserId: currentUser._id,
+      });
 
-      // Cleanup on unmount or when user logs out
       return () => {
         newSocket.disconnect();
         socketRef.current = null;
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser?._id, dispatch]); // Only re-run when currentUser or socket changes
+  }, [currentUser?._id, dispatch, SOCKET_URL]);
 
   return null; // This component doesn't render anything visually
 };

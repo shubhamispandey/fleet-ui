@@ -24,7 +24,8 @@
       "@utils/*": ["utils/*"],
       "@hooks/*": ["hooks/*"],
       "@redux/*": ["redux/*"],
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@sockets/*": ["sockets/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

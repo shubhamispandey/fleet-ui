@@ -5,18 +5,20 @@ import {
   setRecievedMessage,
   setRecievedConversation,
   setTypingIndicator,
+  updateMessageReadStatus,
 } from "@redux/slices/conversationsSlice";
 
 type ConversationEventsDeps = {
   dispatch: Dispatch<UnknownAction>;
+  currentUserId: string;
 };
 
 const registerConversationEvents = (
   socket: Socket,
-  { dispatch }: ConversationEventsDeps
+  { dispatch, currentUserId }: ConversationEventsDeps
 ) => {
   socket.on(SOCKET_EVENTS.RECEIVE_MESSAGE, ({ conversationId, message }) => {
-    dispatch(setRecievedMessage({ conversationId, message }));
+    dispatch(setRecievedMessage({ conversationId, message, currentUserId }));
   });
   socket.on(SOCKET_EVENTS.RECEIVE_CONVERSATION, (conversation) => {
     dispatch(setRecievedConversation(conversation.data));
@@ -25,6 +27,14 @@ const registerConversationEvents = (
     SOCKET_EVENTS.TYPING_INDICATOR,
     ({ conversationId, userId, isTyping }) => {
       dispatch(setTypingIndicator({ conversationId, userId, isTyping }));
+    }
+  );
+  socket.on(
+    SOCKET_EVENTS.MESSAGE_READ,
+    ({ conversationId, userId, modifiedCount }) => {
+      dispatch(
+        updateMessageReadStatus({ conversationId, userId, modifiedCount })
+      );
     }
   );
 };
