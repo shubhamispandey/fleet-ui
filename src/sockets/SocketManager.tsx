@@ -40,9 +40,9 @@ const SocketManager = () => {
         socketRef.current = null;
       };
     }
-  }, [currentUser?._id, dispatch, SOCKET_URL]);
+  }, [currentUser?._id, dispatch]);
 
-  return null; // This component doesn't render anything visually
+  return null;
 };
 
 export default SocketManager;
