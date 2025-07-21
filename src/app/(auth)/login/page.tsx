@@ -4,7 +4,7 @@ import { ChangeEvent, useLayoutEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+// import { signIn } from "next-auth/react";
 
 import Button from "@components/button/Button";
 import Input from "@components/input/Input";
@@ -16,9 +16,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "@redux/store";
 
 export default function LoginPage() {
+  // const [userData, setUserData] = useState<LoginParams>({
+  //   email: "shubhampandeyhaihum@gmail.com",
+  //   password: "Shubham#057",
+  // });
   const [userData, setUserData] = useState<LoginParams>({
-    email: "shubhampandeyhaihum@gmail.com",
-    password: "Shubham#057",
+    email: "",
+    password: "",
   });
   const router = useRouter();
   const { login } = useAuthHook();
@@ -44,6 +48,13 @@ export default function LoginPage() {
     login(userData, router.push);
   };
 
+  const populateAccount = (email: string) => {
+    setUserData({
+      email,
+      password: "admin",
+    });
+  };
+
   return (
     <div className="flex min-h-lvh flex-col justify-center px-6 py-12 lg:px-8 bg-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -60,6 +71,37 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {/* Test Account Information */}
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+          <h3 className="text-sm font-semibold text-blue-800 mb-2">
+            Test Accounts
+          </h3>
+          <div className="text-xs text-blue-700 space-y-2">
+            <div className="flex items-center justify-between">
+              <span>
+                <strong>John Doe:</strong> john_doe@gmail.com / admin
+              </span>
+              <button
+                onClick={() => populateAccount("john_doe@gmail.com")}
+                className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+              >
+                Use
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>
+                <strong>Jane Doe:</strong> jane_doe@gmail.com / admin
+              </span>
+              <button
+                onClick={() => populateAccount("jane_doe@gmail.com")}
+                className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+              >
+                Use
+              </button>
+            </div>
+          </div>
+        </div>
+
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
           <div>
             <Input
@@ -100,7 +142,7 @@ export default function LoginPage() {
 
         <div className="relative w-full border-t-2 border-dashed my-8 after:content-['OR'] after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:text-slate-800 after:bg-white after:p-2"></div>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <Button
             kind="secondary"
             loading={false}
@@ -118,7 +160,7 @@ export default function LoginPage() {
             className="mt-4"
             fullWidth={true}
           />
-        </div>
+        </div> */}
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}
