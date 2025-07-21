@@ -98,8 +98,8 @@ const Header = () => {
           >
             {renderMenuItem("#home", "Home", activeMenu === "home")}
             {renderMenuItem("#features", "Features", activeMenu === "features")}
-            {renderMenuItem("/engage", "Participate", false)}
-            {renderMenuItem("/dashboard", "Dashboard", false)}
+            {/* {renderMenuItem("/engage", "Participate", false)} */}
+            {/* {renderMenuItem("/dashboard", "Dashboard", false)} */}
             <li className="h-10 mt-auto mx-auto">
               <button
                 onClick={() => router.push("/login")}

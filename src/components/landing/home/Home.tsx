@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { Video, MessageCircle } from "lucide-react"; // Add this import
+// import { Video, MessageCircle } from "lucide-react"; // Add this import
 
 const Home = () => {
   return (
@@ -15,14 +15,14 @@ const Home = () => {
               Please, enter the meeting id if you want to join the meeting or
               create a meeting
             </p>
-            <div className="flex gap-4">
+            {/* <div className="flex gap-4">
               <button className="flex items-center gap-2 p-2 px-3 border-2 border-white rounded-md text-[15px] bg-white text-slate-700">
                 <Video size={20} /> Create a Meeting
               </button>
               <button className="flex items-center gap-2 p-2 px-3 border-2 border-white rounded-md text-[15px] text-white transition hover:bg-white hover:text-slate-900">
                 <MessageCircle size={20} /> Join a Meeting
               </button>
-            </div>
+            </div> */}
           </div>
           <div className="w-full mt-2 overflow-hidden md:absolute md:top-20 md:right-0 md:w-1/2 animate__animated animate__fadeInUp animate__delay-0.5s">
             <Image
