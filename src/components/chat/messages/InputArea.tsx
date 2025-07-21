@@ -9,14 +9,20 @@ const ChatInput = () => {
   const { recipient, handleNotifyTyping, conversationId } = useDashboard();
   const [inputValue, setInputValue] = useState("");
   const socket = useSelector((state: RootState) => state.socket.socket);
+  const { selectedMessage, selectedConversation } = useSelector(
+    (state: RootState) => state.conversations
+  );
 
   // Typing state management
   const isTypingRef = useRef(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTypingTime = useRef<number>(0);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   // Constants
-  const TYPING_TIMEOUT = 3000; // 3 seconds
+  const TYPING_TIMEOUT = 3000; // 3 secondsx
+  const isEdit = selectedMessage.type == "edit";
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -80,6 +86,7 @@ const ChatInput = () => {
     [startTyping, stopTyping]
   );
 
+  // ...existing code...
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim() === "") return;
@@ -87,14 +94,25 @@ const ChatInput = () => {
     // Stop typing indicator immediately when message is sent
     stopTyping();
 
-    socket?.emit(SOCKET_EVENTS.SEND_PRIVATE_MESSAGE, {
-      receiverId: recipient?._id,
-      content: inputValue,
-    });
+    if (selectedConversation.data?.type === "private") {
+      const messageId = selectedMessage?.message?._id;
+      const conversationId = selectedConversation.data?._id;
+      const isEdit = !!messageId;
+      const event = isEdit
+        ? SOCKET_EVENTS.UPDATE_MESSAGE
+        : SOCKET_EVENTS.SEND_PRIVATE_MESSAGE;
+
+      socket?.emit(event, {
+        ...(isEdit
+          ? { messageId, conversationId }
+          : { receiverId: recipient?._id }),
+        content: inputValue,
+      });
+    }
+
     setInputValue("");
   };
 
-  // Cleanup on unmount or conversation change
   useEffect(() => {
     return cleanup;
   }, [cleanup]);
@@ -103,6 +121,13 @@ const ChatInput = () => {
     // Stop typing when conversation changes
     stopTyping();
   }, [conversationId, stopTyping]);
+
+  useEffect(() => {
+    if (isEdit) {
+      setInputValue(selectedMessage.message?.content ?? "");
+      inputRef.current?.focus();
+    }
+  }, [isEdit, selectedMessage.message]);
 
   return (
     <form
@@ -125,6 +150,7 @@ const ChatInput = () => {
       </div>
       <input
         id="sendMessage"
+        ref={inputRef}
         value={inputValue}
         onChange={handleInputChange}
         onBlur={stopTyping}

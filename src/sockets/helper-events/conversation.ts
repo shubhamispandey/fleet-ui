@@ -6,6 +6,7 @@ import {
   setRecievedConversation,
   setTypingIndicator,
   updateMessageReadStatus,
+  updateMessage,
 } from "@redux/slices/conversationsSlice";
 
 type ConversationEventsDeps = {
@@ -37,6 +38,10 @@ const registerConversationEvents = (
       );
     }
   );
+  socket.on(SOCKET_EVENTS.MESSAGE_UPDATED, (result) => {
+    const { data: message } = result;
+    dispatch(updateMessage(message));
+  });
 };
 
 export default registerConversationEvents;

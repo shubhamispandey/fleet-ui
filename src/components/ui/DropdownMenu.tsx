@@ -194,6 +194,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 onClick={() => {
                   if (!item.disabled) {
                     item.onClick();
+                    onClose();
                   }
                 }}
                 disabled={item.disabled}

@@ -5,6 +5,8 @@ import ReadStatus from "./ReadStatus";
 import Modal from "../../ui/Modal";
 import DropdownMenu from "../../ui/DropdownMenu";
 import MessageInfoModal from "./MessageInfoModal";
+import { Delete, Edit, Info, Pin } from "lucide-react";
+import useDashboard from "@hooks/useDashboard";
 
 interface MessageProps {
   message: MessageType;
@@ -21,6 +23,8 @@ const Message: React.FC<MessageProps> = ({
   participants,
   participantData,
 }) => {
+  const { handleEditMessage } = useDashboard();
+
   const isSelf = message.senderId._id === currentUserId;
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({
@@ -38,10 +42,11 @@ const Message: React.FC<MessageProps> = ({
   const [showMessageInfoModal, setShowMessageInfoModal] = useState(false);
   const textContentRef = useRef<HTMLDivElement>(null);
 
+  const is15MinutesOld =
+    new Date(message.createdAt).getTime() > Date.now() - 15 * 60 * 1000;
+
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-
-    // Get text content element bounds (the actual message bubble)
     if (textContentRef.current) {
       const rect = textContentRef.current.getBoundingClientRect();
       setMessageBounds({
@@ -53,7 +58,6 @@ const Message: React.FC<MessageProps> = ({
         height: rect.height,
       });
     }
-
     setContextMenuPosition({ x: e.clientX, y: e.clientY });
     setShowContextMenu(true);
   };
@@ -70,24 +74,26 @@ const Message: React.FC<MessageProps> = ({
   const contextMenuItems = [
     {
       label: "Message Info",
-      icon: (
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      ),
+      icon: <Info />,
       onClick: handleMessageInfo,
     },
   ];
+
+  if (isSelf && message.editable && is15MinutesOld) {
+    contextMenuItems.push({
+      label: "Edit",
+      icon: <Edit />,
+      onClick: () => handleEditMessage({ message }),
+    });
+  }
+
+  if (isSelf && message.deletable) {
+    contextMenuItems.push({
+      label: "Delete",
+      icon: <Delete />,
+      onClick: () => {},
+    });
+  }
 
   return (
     <>
@@ -115,16 +121,45 @@ const Message: React.FC<MessageProps> = ({
           )}
           <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
         </div>
+
+        {/* Reply Preview */}
+        {message.replySnapshot && (
+          <div className="max-w-[85vw] md:max-w-[65vw] p-2 text-sm text-gray-600 bg-gray-100 border-l-4 border-indigo-500 rounded-t-md">
+            <span className="font-medium">
+              {message.replySnapshot.senderName}
+            </span>
+            : {message.replySnapshot.content}
+          </div>
+        )}
+
+        {/* Message bubble */}
         <div
           ref={textContentRef}
-          className={`max-w-[85vw] md:max-w-[65vw] px-4 py-3 rounded-2xl shadow-sm ${
+          className={`relative max-w-[85vw] md:max-w-[65vw] px-4 py-3 rounded-2xl shadow-sm whitespace-pre-wrap ${
             isSelf
               ? "bg-indigo-600 text-white rounded-br-none"
               : "bg-white text-gray-800 rounded-bl-none border border-gray-100"
           }`}
         >
-          {message.content}
+          {message.deletedBy ? (
+            <span className="italic text-sm text-gray-400">
+              This message was deleted
+            </span>
+          ) : (
+            <>
+              {message.content}
+              {message.edited && (
+                <span className="ml-2 text-xs italic text-gray-300">
+                  (edited)
+                </span>
+              )}
+            </>
+          )}
+          {message.isPinned && (
+            <Pin className="absolute top-1 right-1 w-4 h-4 text-yellow-500" />
+          )}
         </div>
+
         <ReadStatus
           isSelf={isSelf}
           readBy={message.readBy}

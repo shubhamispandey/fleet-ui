@@ -81,6 +81,10 @@ const initialState: ConversationsState = {
     },
     error: null,
   },
+  selectedMessage: {
+    message: null,
+    type: null,
+  },
 };
 
 const conversationsSlice = createSlice({
@@ -95,9 +99,10 @@ const conversationsSlice = createSlice({
 
       // Clear unread count for the selected conversation
       if (action.payload.data) {
-        const conversationIndex = state.allConversations.data.conversations.findIndex(
-          (conv) => conv._id === action.payload.data!._id
-        );
+        const conversationIndex =
+          state.allConversations.data.conversations.findIndex(
+            (conv) => conv._id === action.payload.data!._id
+          );
         if (conversationIndex !== -1) {
           state.allConversations.data.conversations[
             conversationIndex
@@ -251,9 +256,10 @@ const conversationsSlice = createSlice({
       }
 
       // Update last message read status in conversations list
-      const conversationIndex = state.allConversations.data.conversations.findIndex(
-        (conv) => conv._id === conversationId
-      );
+      const conversationIndex =
+        state.allConversations.data.conversations.findIndex(
+          (conv) => conv._id === conversationId
+        );
       if (conversationIndex !== -1) {
         const lastMessage =
           state.allConversations.data.conversations[conversationIndex]
@@ -286,9 +292,10 @@ const conversationsSlice = createSlice({
       const { conversationId } = action.payload;
 
       // Clear unread count for specific conversation
-      const conversationIndex = state.allConversations.data.conversations.findIndex(
-        (conv) => conv._id === conversationId
-      );
+      const conversationIndex =
+        state.allConversations.data.conversations.findIndex(
+          (conv) => conv._id === conversationId
+        );
       if (conversationIndex !== -1) {
         state.allConversations.data.conversations[
           conversationIndex
@@ -303,6 +310,23 @@ const conversationsSlice = createSlice({
         state.selectedConversation.data.unreadCount = 0;
       }
     },
+    setSelectedMessage: (state, action) => {
+      state.selectedMessage = action.payload;
+    },
+    updateMessage: (state, action) => {
+      const conversationId = state.selectedConversation.data?._id;
+
+      if (conversationId) {
+        const messageIndex = state.messages.data.messages?.[
+          conversationId
+        ].findIndex((message) => message._id === action.payload._id);
+        if (messageIndex !== -1)
+          state.messages.data.messages[conversationId][messageIndex] =
+            action.payload;
+      }
+    },
+
+    // EDIT
   },
   extraReducers: (builder) => {
     builder
@@ -356,4 +380,6 @@ export const {
   clearAllTypingIndicators,
   updateMessageReadStatus,
   clearUnreadCount,
+  setSelectedMessage,
+  updateMessage,
 } = conversationsSlice.actions;

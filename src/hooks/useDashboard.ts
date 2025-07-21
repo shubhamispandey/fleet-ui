@@ -7,12 +7,14 @@ import {
   getConversationsThunk,
   getMessagesThunk,
   selectConversation,
+  setSelectedMessage,
 } from "@redux/slices/conversationsSlice";
 import SOCKET_EVENTS from "@lib/socketEvents";
 import {
   Conversation,
   CreateConversationPayload,
   HandleGetMessages,
+  MessageType,
   UserResponseType,
   UsersType,
   UserType,
@@ -191,6 +193,11 @@ const useDashboard = () => {
     [socket, conversationId]
   );
 
+  // EDIT MESSAGE
+  const handleEditMessage = ({ message }: { message: MessageType }) => {
+    dispatch(setSelectedMessage({ message, type: "edit" }));
+  };
+
   return {
     // FUNCTIONS
     handleSearchNavbar,
@@ -200,6 +207,7 @@ const useDashboard = () => {
     handleSelectConversation,
     handleGetMessages,
     handleNotifyTyping,
+    handleEditMessage,
 
     // UTILS
     conversationId,

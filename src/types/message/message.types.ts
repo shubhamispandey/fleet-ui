@@ -54,16 +54,43 @@ interface MessageSender {
 }
 
 export interface MessageType {
-  type: string;
   _id: string;
   conversationId: string;
   senderId: MessageSender;
   content: string;
-  readBy: string[];
-  timestamp: string;
+  type: "text" | "image" | "file" | "video" | "audio";
+  readBy: string[]; // Array of user IDs
+  replyTo: string | null; // Message ID being replied to
+
+  // Edit tracking
+  edited: boolean;
+  editedBy: string | null; // User ID
+  editedAt: string | null; // ISO string
+  editable: boolean;
+
+  // Delete tracking
+  deletedBy: null | {
+    _id: string;
+    name: string;
+    avatar: string;
+  }; // User ID
+  deletedAt: string | null; // ISO string
+  deletable: boolean;
+
+  // Pinned status
+  isPinned: boolean;
+
+  // Optional reply preview (if using replySnapshot)
+  replySnapshot?: {
+    content: string;
+    senderName: string;
+    type: "text" | "image" | "file" | "video" | "audio";
+  };
+
+  // System timestamps
   createdAt: string;
   updatedAt: string;
-  __v: number;
+  __v?: number;
 }
 
 export interface MessageResponseData {
@@ -81,10 +108,16 @@ export interface MessagesState {
   error: string | null;
 }
 
+export interface SelectedMessageState {
+  message: null | MessageType;
+  type: null | "edit" | "delete";
+}
+
 export interface ConversationsState {
   allConversations: AllConversationState;
   selectedConversation: SelectedConversationState;
   messages: MessagesState;
+  selectedMessage: SelectedMessageState;
 }
 
 export interface GetMessagesParams {
