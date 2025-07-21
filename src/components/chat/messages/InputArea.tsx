@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Paperclip, Smile, ArrowUpRight } from "lucide-react";
+import { /* Paperclip, Smile,  */ ArrowUpRight } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@redux/store";
 import SOCKET_EVENTS from "@lib/socketEvents";
@@ -134,7 +134,7 @@ const ChatInput = () => {
       className="flex items-center gap-3 px-3 py-4 bg-white border-t-2 border-gray-100 rounded-2xl shadow-xl w-full"
       onSubmit={handleSubmit}
     >
-      <div className="hidden md:flex items-center gap-2 px-2 w-auto">
+      {/*   <div className="hidden md:flex items-center gap-2 px-2 w-auto">
         <button
           className="p-2 bg-gray-100 hover:bg-indigo-50 text-gray-500 hover:text-indigo-600 rounded-full transition"
           type="button"
@@ -147,7 +147,7 @@ const ChatInput = () => {
         >
           <Smile size={20} />
         </button>
-      </div>
+      </div> */}
       <input
         id="sendMessage"
         ref={inputRef}

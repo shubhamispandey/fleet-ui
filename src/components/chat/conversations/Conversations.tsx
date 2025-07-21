@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import List from "./ConversationList";
 import EmptyConversations from "./EmptyConversations";
-import { Plus, Search } from "lucide-react";
+import { /* Plus, */ Search } from "lucide-react";
 import useDashboard from "@hooks/useDashboard";
 import { useSelector } from "react-redux";
 import { RootState } from "@redux/store";
@@ -23,10 +23,10 @@ const Conversations = () => {
     [handleGetConversations]
   );
 
-  const onSearch = useCallback(
-    () => debouncedGetConversations({ search }),
-    [debouncedGetConversations, search]
-  );
+  const onSearch = useCallback(() => debouncedGetConversations({ search }), [
+    debouncedGetConversations,
+    search,
+  ]);
 
   useEffect(onSearch, [onSearch]);
 
@@ -64,12 +64,12 @@ const Conversations = () => {
               <List />
             )}
           </div>
-          <div className="p-4 border-t border-gray-200">
+          {/* <div className="p-4 border-t border-gray-200">
             <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-indigo-600 text-white font-medium shadow-sm hover:bg-indigo-700 transition">
               <Plus size={18} />
               New Chat
             </button>
-          </div>
+          </div> */}
         </>
       )}
     </aside>

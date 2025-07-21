@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Phone, Video, MoreVertical, Circle } from "lucide-react";
+import { /* Phone, Video, MoreVertical, */ Circle } from "lucide-react";
 import useDashboard from "@hooks/useDashboard";
 
 const ChatHeader = () => {
@@ -34,7 +34,7 @@ const ChatHeader = () => {
           </span>
         </div>
       </div>
-      <div className="ml-auto flex items-center gap-3">
+      {/* <div className="ml-auto flex items-center gap-3">
         <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-600">
           <Phone size={20} />
         </button>
@@ -44,7 +44,7 @@ const ChatHeader = () => {
         <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-600">
           <MoreVertical size={20} />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

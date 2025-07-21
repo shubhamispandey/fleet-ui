@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Menu,
-  MenuButton,
+  // MenuButton,
   MenuItem,
   MenuItems,
   Transition,
@@ -12,7 +12,7 @@ import {
   Search,
   User,
   MessageSquare,
-  ChevronDown,
+  // ChevronDown,
   CheckCircle,
 } from "lucide-react";
 import Image from "next/image";
@@ -64,7 +64,7 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
       <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-200 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent">
         {/* Category Dropdown */}
         <Menu as="div" className="relative">
-          <MenuButton className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl overflow-hidden text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors w-32">
+          {/* <MenuButton className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl overflow-hidden text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors w-32">
             {category === "people" ? (
               <User className="text-indigo-500 w-5 h-5" />
             ) : (
@@ -74,7 +74,7 @@ const SearchBar = ({ onSearch, searchResults }: SearchBarProps) => {
               {category === "people" ? "People" : "Chats"}
             </span>
             <ChevronDown className="text-gray-400 w-4 h-4" />
-          </MenuButton>
+          </MenuButton> */}
 
           <Transition
             enter="transition ease-out duration-100"
