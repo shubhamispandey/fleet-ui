@@ -71,6 +71,27 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+
+        {/* Demo Video */}
+        <div className="mb-6 p-4 border border-gray-200 rounded-md bg-gray-50">
+          <h3 className="text-sm font-semibold text-gray-800 mb-3 text-center">
+            Watch Demo
+          </h3>
+
+          <div className="relative w-full overflow-hidden rounded-md aspect-video">
+            <iframe
+              src="https://player.vimeo.com/video/1150876265?badge=0&autopause=0"
+              className="absolute top-0 left-0 w-full h-full"
+              frameBorder="0"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="Fleet Demo"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
+
         {/* Test Account Information */}
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
           <h3 className="text-sm font-semibold text-blue-800 mb-2">
